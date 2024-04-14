@@ -2,25 +2,19 @@
 
 ## Guide
 
-> **Note**:
+> [!NOTE]  
 > Make sure you have [.NET Core installed](Dotnet.md) before attempting to run the commands below.
-> **Docker** users, please refer to the [Docker usage instructions](Docker.md).
+> **Docker** users, refer to the [Docker usage instructions](Docker.md).
 
 ## Step 1
 
-After extracting the `.zip`, open Command Prompt, aka `cmd` (`Terminal` on **macOS** and **Linux**).
+After extracting the `.zip`, open Command Prompt (`cmd`) on Windows or `Terminal` if on **macOS** or **Linux**.
 
 ## Step 2
 
-Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press ENTER to run the command.
+Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press <kbd>⏎ Enter</kbd> to run the command.
 
-**Windows** users can quickly get the directory's path by clicking the address bar while inside the folder.
-![Copy path from Explorer](https://i.imgur.com/XncnhC2.gif)
-
-**macOS** users can select the `.exe`, hit Command+I (⌘I), and copy what's after `Where:` to get the directory
-![Mac info panel](https://camo.githubusercontent.com/3c51a904b0099c9f68a4797461d4a7914902fc04/68747470733a2f2f692e696d6775722e636f6d2f323975364e79782e706e67)
-
-You can also drag and drop the folder on **every platform**.
+Drag and drop the folder to the terminal to automatically fill in the path.
 ![Drag and drop folder](https://i.imgur.com/sOpZQAb.gif)
 
 ## Step 3
@@ -28,7 +22,7 @@ You can also drag and drop the folder on **every platform**.
 Now we're ready to run the commands. The examples on this page follow the Windows file path format, change the file
 paths according to your system.
 
-On **Windows**, type the following command in your terminal of choice, then press ENTER to run it. This will list all available subcommands and options.
+On **Windows**, type the following command in your terminal of choice, then press <kbd>⏎ Enter</kbd> to run it. This will list all available subcommands and options.
 
 ```console
 DiscordChatExporter.Cli.exe
@@ -46,22 +40,22 @@ If either of the above approaches don't work for you, you can also run **Discord
 dotnet DiscordChatExporter.Cli.dll
 ```
 
-> **Docker** users, please refer to the [Docker usage instructions](Docker.md).
+> **Docker** users, refer to the [Docker usage instructions](Docker.md).
 
 ## CLI commands
 
-| Command                 | Description                                          |
-|-------------------------|------------------------------------------------------|
-| export                  | Exports a channel                                    |
-| exportdm                | Exports all direct message channels                  |
-| exportguild             | Exports all channels within the specified server     |
-| exportall               | Exports all accessible channels                      |
-| channels                | Outputs the list of channels in the given server     |
-| dm                      | Outputs the list of direct message channels          |
-| guilds                  | Outputs the list of accessible servers               |
-| guide                   | Explains how to obtain token, server, and channel ID |
+| Command     | Description                                          |
+| ----------- | ---------------------------------------------------- |
+| export      | Exports a channel                                    |
+| exportdm    | Exports all direct message channels                  |
+| exportguild | Exports all channels within the specified server     |
+| exportall   | Exports all accessible channels                      |
+| channels    | Outputs the list of channels in the given server     |
+| dm          | Outputs the list of direct message channels          |
+| guilds      | Outputs the list of accessible servers               |
+| guide       | Explains how to obtain token, server, and channel ID |
 
-To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
+To use the commands, you'll need a token. For the instructions on how to get a token, refer to [this page](Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
 
 To get help with a specific command, run:
 
@@ -226,8 +220,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --after "2019-0
 You can try different formats like `17-SEP-2019 11:34 PM` or even refine your ranges down to
 milliseconds `17-SEP-2019 23:45:30.6170`!
 Don't forget to quote (") the date if it has spaces!
-More info about .NET date
-formats [here](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
+[More info about .NET date formats](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
 ### Export channels from a specific server
 
@@ -281,6 +274,12 @@ To list the channels available in a specific server, use the `channels` command 
 dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814
 ```
 
+To save the list to a file, follow the `channels` command with the output redirection operator `>` and the path the list should be saved to:
+
+```console
+dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\output.txt
+```
+
 ### List direct message channels
 
 To list all DM channels accessible to the current account, use the `dm` command:
@@ -291,8 +290,8 @@ dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn"
 
 ### List servers
 
-To list all servers accessible by the current account, use the `guilds` command:
+To list servers accessible by the current account to a file, use the `guilds` command:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn" > C:\path\to\output.txt
+dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn"
 ```
