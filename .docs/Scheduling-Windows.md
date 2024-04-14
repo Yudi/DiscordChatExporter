@@ -6,28 +6,52 @@ We'll be using [DiscordChatExporter CLI](https://github.com/Tyrrrz/DiscordChatEx
 
 1. Open a text editor such as Notepad and paste:
 
-```console
+```powershell
 # Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
 
-$TOKEN = "tokenhere"
-$CHANNEL = "channelhere"
-$EXEPATH = "exefolderhere"
-$FILENAME = "filenamehere"
-$EXPORTDIRECTORY = "dirhere"
-$EXPORTFORMAT = "formathere"
+$TOKEN = "tokenHere"
+$CHANNEL_ID = "channelIdHere"
+$DCE_FOLDER = "dceFolderHere"
+$EXPORT_DIRECTORY = "exportFolderHere"
+$FILENAME = "filenameHere"
+$EXPORT_FORMAT = "formatHere"
 # Available export formats: PlainText, HtmlDark, HtmlLight, Json, Csv
+# You can't use partitioning (-p) and dynamic output (-o %) with this script.
+# You can edit the export command on line 47 if you'd like to include more options like date ranges and date format.
 
-cd $EXEPATH
+Switch ($EXPORT_FORMAT)
+{
+    "PlainText" {
+      $FILE_EXTENSION = "txt"
+    }
+    "HtmlDark" -or "HtmlLight" {
+      $FILE_EXTENSION = "html"
+    }
+    "Json" {
+      $FILE_EXTENSION = "json"
+    }
+    "Csv" {
+      $FILE_EXTENSION = "csv"
+    }
+    Default {
+       # If the format is not listed (invalid), the script will exit.
+      Write-Host "$EXPORT_FORMAT is not a valid export format. Exiting."
+      exit 1
+    }
+}
 
-.\DiscordChatExporter.Cli.exe export -t $TOKEN -c $CHANNEL -f $EXPORTFORMAT -o "$FILENAME.tmp"
+# This will set the script's directory to DCE_FOLDER.
+# If unable to do so, the script will exit.
+cd $DCE_FOLDER || exit 1
 
-$Date = Get-Date -Format "yyyy-MM-dd-HH-mm"
+# This will export your chat.
+.\DiscordChatExporter.Cli.exe export -t $TOKEN -c $CHANNEL_ID -f $EXPORT_FORMAT -o "$FILENAME.tmp"
 
-If($EXPORTFORMAT -match "PlainText"){mv "$FILENAME.tmp" -Destination "$EXPORTDIRECTORY\$FILENAME-$Date.txt"}
-ElseIf($EXPORTFORMAT -match "HtmlDark"){mv "$FILENAME.tmp" -Destination "$EXPORTDIRECTORY\$FILENAME-$Date.html"}
-ElseIf($EXPORTFORMAT -match "HtmlLight"){mv "$FILENAME.tmp" -Destination "$EXPORTDIRECTORY\$FILENAME-$Date.html"}
-ElseIf($EXPORTFORMAT -match "Json"){mv "$FILENAME.tmp" -Destination "$EXPORTDIRECTORY\$FILENAME-$Date.json"}
-ElseIf($EXPORTFORMAT -match "Csv"){mv "$FILENAME.tmp" -Destination "$EXPORTDIRECTORY\$FILENAME-$Date.csv"}
+# This sets the current time to a variable so it can be used in the filename.
+$Date = Get-Date -Format "yyyy-MM-dd-HH-mm-ss"
+
+# This will move the .tmp file to the desired export location.
+mv "$FILENAME.tmp" -Destination "$EXPORT_DIRECTORY\$FILENAME-$Date.$FILE_EXTENSION"
 exit
 ```
 
