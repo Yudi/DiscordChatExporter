@@ -25,7 +25,6 @@ EXPORT_FOLDER="exportFolderhere"
 FILENAME="filenameHere"
 EXPORT_FORMAT="formatHere"
 # Available export formats: PlainText, HtmlDark, HtmlLight, Json, Csv
-#
 # You can't use partitioning (-p) and dynamic output (-o %) with this script.
 # You can edit the export command on line 47 if you'd like to include more options like date ranges and date format.
 
@@ -49,9 +48,7 @@ csv)
   ;;
 *)
  # If the format is not listed (invalid), the script will exit.
-  echo "$EXPORT_FORMAT - Unknown export format"
-  echo "Available export formats: PlainText, HtmlDark, HtmlLight, Json, Csv"
-  echo "/\ CaSe-SeNsItIvE /\\"
+  echo "$EXPORT_FORMAT is not a valid export format. Exiting."
   exit 1
   ;;
 esac
@@ -63,7 +60,7 @@ cd $DCE_FOLDER || exit 1
 # This will export your chat.
 # If unable to do so, the script will exit.
 if ! ./DiscordChatExporter.Cli.sh export -t "$TOKEN" -c "$CHANNEL_ID" -f "$EXPORT_FORMAT" -o "$FILENAME.tmp"; then
-  echo "Failed to export chat."
+  echo "Failed to export chat. Exiting."
   exit 1
 fi
 
@@ -76,7 +73,7 @@ if ! mv "$FILENAME.tmp" "$EXPORT_FOLDER/$FILENAME-$CURRENTTIME.$FILE_EXTENSION";
   echo "Unable to move $FILENAME.tmp to $EXPORT_FOLDER/$FILENAME-$CURRENTTIME.$FILE_EXTENSION."
   echo "Cleaning up..."
   if ! rm -Rf "$FILENAME.tmp"; then
-    echo "Unable to delete $FILENAME.tmp."
+    echo "Unable to delete $FILENAME.tmp. Exiting."
   fi
   exit 1
 fi
