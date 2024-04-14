@@ -26,9 +26,11 @@
 
 ## FAQ & Troubleshooting
 
-- [General questions](Troubleshooting.md#general)
-- [First steps help](Troubleshooting.md#first-steps)
-- [It's crashing/failing](Troubleshooting.md#DCE-is-crashingfailing)
-- [.NET Core Runtime is required](Troubleshooting.md#net-core-runtime-is-required)
-- [Errors](Troubleshooting.md#errors)
+TODO: update
+
+- [General questions](FAQ.md#general)
+- [First steps help](FAQ.md#first-steps)
+- [It's crashing/failing](FAQ.md#DCE-is-crashingfailing)
+- [.NET Core Runtime is required](FAQ.md#net-core-runtime-is-required)
+- [Common errors](Troubleshooting.md#errors)
 - [**More help**](Troubleshooting.md)

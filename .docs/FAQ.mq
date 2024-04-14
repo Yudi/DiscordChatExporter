@@ -1,0 +1,170 @@
+# Frequently Asked Questions (FAQ)
+
+## General questions
+
+### Token stealer?
+
+No. Your token is only used to connect to Discord's API, it's not sent anywhere else.  
+The code is open-source, so you can verify this yourself.  
+If you're using the GUI, be aware that your token will be saved to a plain text file unless you disable it in the settings menu.
+
+### Why should I be worried about the safety of my token?
+
+A token can be used to log into your account.  
+Treat it like a password and never share it.
+
+### How can I reset my token?
+
+Follow the [instructions here](Token-and-IDs.md).
+
+### Will I get banned if I use this?
+
+Automating user accounts is technically against [Discord's Terms of Service](https://discord.com/terms), use at your discretion.  
+[Bot accounts](https://discord.com/developers/docs/topics/oauth2#bot-users) don't have this restriction.
+
+### Will the messages disappear from the exported file if I delete a message, delete my account or block a person?
+
+Text messages will not be removed from the exported file, but if media, such as images and user avatars, is changed or deleted, it will no longer be displayed.  
+To avoid this, export using the "Download media" (`--media`) option.
+
+### Can DCE export messages that have already been deleted?
+
+No, DCE cannot access them since they have been permanently deleted from Discord's servers.
+
+### Can DCE export private chats?
+
+Yes, if your account has access to them.
+
+### Can DCE download images?
+
+Yes, and other media too. Export using the "Download media" (`--media`) option.
+
+### Can the exported chats be shared?
+
+Yes.  
+If you've used the "Download media" option, remember to share the media folder as well.
+
+### Can DCE export multiple formats at once?
+
+No, it can only export one format at a time.
+
+### Can DCE convert exported chats to another format?
+
+No, DCE can't modify existing files.
+
+### Can DCE add new messages to an existing export?
+
+No, DCE can't modify existing files.
+
+### Can DCE partition exinsting exported chats?
+
+No, DCE can't modify existing files.
+
+### Can DCE recreate the exported chats in Discord?
+
+No, DCE is an exporter.
+
+### Can DCE reupload exported messages to another channel?
+
+No, DCE is an exporter.
+
+### Can DCE mass delete messages?
+
+No, DCE is an exporter.
+
+### Can I run DCE on my phone?
+
+No, DCE is a desktop application.
+
+### Can server owners see if I exported a chat?
+
+No.
+
+### How do I know who exported a chat?
+
+You can't.  
+The exported files don't contain any information about who exported them
+
+### Virus detected?
+
+False positive. Check it with [VirusTotal](https://www.virustotal.com/gui/).  
+It's due to the bootstrapper used in the GUI.
+
+## First steps
+
+### How can I find my token?
+
+Check the following page: [Obtaining token](Token-and-IDs.md)
+
+### Where can I find the "Channel IDs"?
+
+Check the following page:
+
+- [Obtaining Channel IDs](Token-and-IDs.md)
+
+### When I open DCE a black window pops up quickly or nothing shows up
+
+If you have [.NET Core Runtime correctly installed](Dotnet.md), you might have downloaded the Cli flavor, try [downloading the Gui](Getting-started.md#gui-or-cli) instead.
+
+### How do I run DCE on macOS or Linux?
+
+Check the following pages:
+
+- [macOS usage instructions](MacOS.md)
+- [Linux usage instructions](Linux.md)
+
+### How can I set DCE to export automatically at certain times?
+
+Check the following pages to learn how to schedule **DiscordChatExporter.CLI** runs (advanced):
+
+- [Windows scheduling](Scheduling-Windows.md)
+- [macOS scheduling](Scheduling-MacOS.md)
+- [Linux scheduling](Scheduling-Linux.md)
+
+### The exported file is too large, I can't open it
+
+Try opening it with a different program, try partitioning or use a different file format, like `PlainText`.
+
+### DCE is crashing or failing
+
+Check the following page: [Installing .NET Core Runtime](Dotnet.md)
+
+If you already have .NET Core installed, check if your problem is a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) before [opening a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
+
+### .NET Core Runtime is required
+
+Check the following page: [Installing .NET Core Runtime](Dotnet.md)
+
+### I see messages in the export, but they have no content
+
+Your bot is missing the 'Message Content Intent'.  
+Go to the [Discord Developer Portal](https://discord.com/developers/applications), navigate to the 'Bot' section and enable it.
+
+### DCE outputs an error and the exported file is incomplete
+
+TODO:
+Please open a new issue.
+
+## CLI
+
+### How do I use the Cli?
+
+Check the [Cli usage instructions](Using-the-CLI.md).
+
+If you're using **Docker**, refer to the [Docker Usage Instructions](Docker.md) instead.
+
+### When I open DCE.Cli.exe a black window pops up quickly or nothing shows up
+
+Check the [Cli usage instructions](Using-the-CLI.md).
+
+### I can't export Direct Messages
+
+Make sure you're [copying the DM Channel ID](Token-and-IDs.md#how-to-get-a-direct-message-channel-id), not the person's user ID.
+
+## Docker
+
+### I can't find Docker exported chats
+
+Check the following page:
+
+- [Docker usage instructions](Docker.md)
