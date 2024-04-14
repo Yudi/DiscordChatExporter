@@ -2,7 +2,7 @@
 
 Docker distribution of DiscordChatExporter provides a way to run the app in a virtualized and isolated environment. Due to the nature of Docker, you also don't need to install any prerequisites otherwise required by DCE.
 
-> **Note**:
+> [!NOTE]
 > Only the CLI flavor of DiscordChatExporter is available for use with Docker.
 
 ## Pulling
@@ -13,7 +13,8 @@ This will download the [Docker image from the registry](https://hub.docker.com/r
 docker pull tyrrrz/discordchatexporter:stable
 ```
 
-Note the `:stable` tag. DiscordChatExporter images are tagged according to the following patterns:
+Note the `:stable` tag.  
+DiscordChatExporter images are tagged according to the following patterns:
 
 - `stable` — latest stable version release. This tag is updated with each release of a new project version. Recommended for personal use.
 - `x.y.z` (e.g. `2.30.1`) — specific stable version release. This tag is pushed when the corresponding version is released and never updated thereafter. Recommended for use in automation scenarios.
@@ -41,9 +42,10 @@ If you want colored output and real-time progress reporting, pass the `-it` (int
 docker run --rm -it -v /path/on/machine:/out tyrrrz/discordchatexporter:stable export -t TOKEN -c CHANNELID
 ```
 
-The `-v /path/on/machine:/out` option instructs Docker to bind the `/out` directory inside the container to a path on your host machine. Replace `/path/on/machine` with the directory you want the files to be saved at.
+The `-v /path/on/machine:/out` option instructs Docker to bind the `/out` directory inside the container to a path on your host machine.  
+Replace `/path/on/machine` with the directory you want the files to be saved at.
 
-> **Note**:
+> [!IMPORTANT]  
 > If you are running SELinux, you will need to add the `:z` option after `/out`, e.g.:
 >
 > ```console
@@ -57,9 +59,9 @@ You can also use the current working directory as the output directory by specif
 - `-v $PWD:/out` in Bash
 - `-v $pwd.Path:/out` in PowerShell
 
-For more information, please refer to the [Dockerfile](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/DiscordChatExporter.Cli.dockerfile) and [Docker documentation](https://docs.docker.com/engine/reference/run).
+For more information, refer to the [Dockerfile](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/DiscordChatExporter.Cli.dockerfile) and [Docker documentation](https://docs.docker.com/engine/reference/run).
 
-To get your Token and Channel IDs, please refer to [this page](Token-and-IDs.md).
+To get your Token and Channel IDs, refer to [this page](Token-and-IDs.md).
 
 ## Unix permissions issues
 
@@ -76,4 +78,4 @@ docker run -it --rm -v $PWD/data:/out --user $(id -u):$(id -g) tyrrrz/discordcha
 
 DiscordChatExpoter CLI accepts the `DISCORD_TOKEN` environment variable as a fallback for the `--token` option. You can set this variable either with the `--env` Docker option or with a combination of the `--env-file` Docker option and a `.env` file.
 
-Please refer to the [Docker documentation](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) for more information.
+Refer to the [Docker documentation](https://docs.docker.com/engine/reference/commandline/run/#set-environment-variables--e---env---env-file) for more information.
