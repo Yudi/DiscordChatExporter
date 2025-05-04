@@ -103,8 +103,8 @@ jobs:
           - linux-arm64
           - linux-musl-x64
           - linux-x64
-          - osx-arm64
-          - osx-x64
+          - macos-arm64
+          - macos-x64
         include:
           - app: DiscordChatExporter.Cli
             asset: DiscordChatExporter.Cli
@@ -112,7 +112,7 @@ jobs:
             # GUI assets aren't suffixed, unlike the CLI assets
             asset: DiscordChatExporter
 
-    runs-on: ${{ startsWith(matrix.rid, 'win-') && 'windows-latest' || startsWith(matrix.rid, 'osx-') && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ${{ startsWith(matrix.rid, 'win-') && 'windows-latest' || startsWith(matrix.rid, 'macos-') && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     permissions:
@@ -186,8 +186,8 @@ jobs:
           - linux-arm64
           - linux-musl-x64
           - linux-x64
-          - osx-arm64
-          - osx-x64
+          - macos-arm64
+          - macos-x64
         include:
           - app: DiscordChatExporter.Cli
             asset: DiscordChatExporter.Cli
