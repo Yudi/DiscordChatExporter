@@ -185,6 +185,12 @@ jobs:
           name: ${{ matrix.asset }}.osx-x64
           path: ${{ matrix.app }}/bin/publish/
 
+      - name: Debug ls directory
+        run: |
+          ls -la ${{ matrix.app }}/bin/publish/ 
+          ls -la ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64
+          ls -la ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64
+
       - name: Create macOS universal binaries
         run: |
           # Lipo is Apple's tool for creating universal binaries
