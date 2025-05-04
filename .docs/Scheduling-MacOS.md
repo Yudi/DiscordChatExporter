@@ -1,9 +1,5 @@
 # Scheduling exports on macOS
 
-Scheduling on macOS is a bit tricky, but it should work if you follow the instructions accordingly.
-
-Make sure you already have **DiscordChatExporter.CLI** and **.NET Core** properly installed ([instructions here](MacOS.md)).
-
 ## Creating the script
 
 1. Open TextEdit.app and create a new file
@@ -51,7 +47,7 @@ fi
 cd $DLLFOLDER || exit 1
 
 # This will export your chat
-dotnet DiscordChatExporter.Cli.dll export -t $TOKEN -c $CHANNELID -f $EXPORTFORMAT -o $FILENAME.tmp
+./DiscordChatExporter.Cli export -t $TOKEN -c $CHANNELID -f $EXPORTFORMAT -o $FILENAME.tmp
 
 # This sets the current time to a variable
 CURRENTTIME=$(date +"%Y-%m-%d-%H-%M-%S")

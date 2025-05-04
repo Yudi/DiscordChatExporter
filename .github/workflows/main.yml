@@ -18,7 +18,7 @@ env:
 
 jobs:
   format:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
@@ -26,24 +26,37 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install .NET
-        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
+
+      # Build the project separately to discern between build and format errors
+      - name: Build
+        run: >
+          dotnet build
+          -p:CSharpier_Bypass=true
+          --configuration Release
 
       - name: Verify formatting
+        id: verify
         run: >
           dotnet build
           -t:CSharpierFormat
           --configuration Release
+          --no-restore
+
+      - name: Report issues
+        if: ${{ failure() && steps.verify.outcome == 'failure' }}
+        run: echo "::error title=Bad formatting::Formatting issues detected. Please build the solution locally to fix them."
 
   test:
     # Tests need access to secrets, so we can't run them against PRs because of limited trust
     if: ${{ github.event_name != 'pull_request' }}
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 10
 
     permissions:
@@ -51,12 +64,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install .NET
-        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Run tests
         env:
@@ -72,7 +85,7 @@ jobs:
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
 
       - name: Upload coverage
-        uses: codecov/codecov-action@f30e4959ba63075080d4f7f90cacc18d9f3fafd7 # v4.0.0
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -82,8 +95,24 @@ jobs:
         app:
           - DiscordChatExporter.Cli
           - DiscordChatExporter.Gui
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporter.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI assets aren't suffixed, unlike the CLI assets
+            asset: DiscordChatExporter
 
-    runs-on: windows-latest
+    runs-on: ${{ startsWith(matrix.rid, 'win-') && 'windows-latest' || startsWith(matrix.rid, 'osx-') && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     permissions:
@@ -92,12 +121,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install .NET
-        uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9 # v4.3.1
         with:
-          dotnet-version: 8.0.x
+          dotnet-version: 9.0.x
 
       - name: Publish app
         run: >
@@ -106,11 +135,13 @@ jobs:
           -p:CSharpier_Bypass=true
           --output ${{ matrix.app }}/bin/publish/
           --configuration Release
+          --runtime ${{ matrix.rid }}
+          --self-contained
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@26f96dfa697d77e81fd5907df203aa23a56210a8 # v4.3.0
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: ${{ matrix.app }}
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/bin/publish/
           if-no-files-found: error
 
@@ -147,11 +178,21 @@ jobs:
         app:
           - DiscordChatExporter.Cli
           - DiscordChatExporter.Gui
+        rid:
+          - win-arm64
+          - win-x86
+          - win-x64
+          - linux-arm
+          - linux-arm64
+          - linux-musl-x64
+          - linux-x64
+          - osx-arm64
+          - osx-x64
         include:
           - app: DiscordChatExporter.Cli
             asset: DiscordChatExporter.Cli
           - app: DiscordChatExporter.Gui
-            # GUI asset isn't suffixed, unlike the CLI asset
+            # GUI assets aren't suffixed, unlike the CLI assets
             asset: DiscordChatExporter
 
     runs-on: ubuntu-latest
@@ -163,27 +204,26 @@ jobs:
 
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@6b208ae046db98c579e8a3aa621ab581ff575935 # v4.1.1
+        uses: actions/download-artifact@95815c38cf2ff2164869cbab79da8d1f422bc89e # v4.2.1
         with:
-          name: ${{ matrix.app }}
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
           path: ${{ matrix.app }}/
-          
-      - name: Configure permissions
-        # Remove this when the GUI also becomes cross-platform
-        if: ${{ matrix.app == 'DiscordChatExporter.Cli' }}
-        run: chmod +x ${{ matrix.app }}/${{ matrix.app }}.sh
+
+      - name: Set permissions
+        if: ${{ !startsWith(matrix.rid, 'win-') }}
+        run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
 
       - name: Create package
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
-        run: zip -rX ../${{ matrix.asset }}.zip .
+        run: zip -r ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
 
       - name: Upload release asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: >
           gh release upload ${{ github.ref_name }}
-          ${{ matrix.asset }}.zip
+          ${{ matrix.asset }}.${{ matrix.rid }}.zip
           --repo ${{ github.event.repository.full_name }}
 
   notify:
@@ -196,7 +236,7 @@ jobs:
 
     steps:
       - name: Notify Discord
-        uses: tyrrrz/action-http-request@64c70c67f5ebc54d4c7ea09cbe3553322778afd5 # 1.1.2
+        uses: tyrrrz/action-http-request@1dd7ad841a34b9299f3741f7c7399f9feefdfb08 # 1.1.3
         with:
           url: ${{ secrets.DISCORD_WEBHOOK }}
           method: POST

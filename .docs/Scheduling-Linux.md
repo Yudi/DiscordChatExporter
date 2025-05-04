@@ -1,8 +1,5 @@
 # Scheduling exports with Cron
 
-> **Note**:
-> Make sure you have [.NET Core installed](Linux.md) before attempting to schedule exports.
-
 ## Creating the script
 
 1. Open Terminal and set the script's path to a variable with `SCRIPT_PATH="/path/to/DiscordChatExporter.Cli/cron-script.sh"` so you don't have to type it repeatedly.

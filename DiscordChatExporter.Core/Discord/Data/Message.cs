@@ -30,15 +30,15 @@ public partial record Message(
     Interaction? Interaction
 ) : IHasId
 {
-    public bool IsSystemNotification =>
+    public bool IsSystemNotification { get; } =
         Kind is >= MessageKind.RecipientAdd and <= MessageKind.ThreadCreated;
 
-    public bool IsReply => Kind == MessageKind.Reply;
+    public bool IsReply { get; } = Kind == MessageKind.Reply;
 
     // App interactions are rendered as replies in the Discord client, but they are not actually replies
     public bool IsReplyLike => IsReply || Interaction is not null;
 
-    public bool IsEmpty =>
+    public bool IsEmpty { get; } =
         string.IsNullOrWhiteSpace(Content)
         && !Attachments.Any()
         && !Embeds.Any()
@@ -83,16 +83,15 @@ public partial record Message
                 // Find embeds with the same URL that only contain a single image and nothing else
                 var trailingEmbeds = embeds
                     .Skip(i + 1)
-                    .TakeWhile(
-                        e =>
-                            e.Url == embed.Url
-                            && e.Timestamp is null
-                            && e.Author is null
-                            && e.Color is null
-                            && string.IsNullOrWhiteSpace(e.Description)
-                            && !e.Fields.Any()
-                            && e.Images.Count == 1
-                            && e.Footer is null
+                    .TakeWhile(e =>
+                        e.Url == embed.Url
+                        && e.Timestamp is null
+                        && e.Author is null
+                        && e.Color is null
+                        && string.IsNullOrWhiteSpace(e.Description)
+                        && !e.Fields.Any()
+                        && e.Images.Count == 1
+                        && e.Footer is null
                     )
                     .ToArray();
 

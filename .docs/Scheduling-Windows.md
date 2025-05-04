@@ -1,7 +1,5 @@
 # Scheduling exports on Windows
 
-We'll be using [DiscordChatExporter CLI](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest), PowerShell, and Task Scheduler.
-
 ## Creating the script
 
 1. Open a text editor such as Notepad and paste:
@@ -43,6 +41,7 @@ Switch ($EXPORT_FORMAT)
 # This will set the script's directory to DCE_FOLDER.
 # If unable to do so, the script will exit.
 cd $DCE_FOLDER || exit 1
+./DiscordChatExporter.Cli export -t $TOKEN -c $CHANNEL -f $EXPORTFORMAT -o "$FILENAME.tmp"
 
 # This will export your chat.
 .\DiscordChatExporter.Cli.exe export -t $TOKEN -c $CHANNEL_ID -f $EXPORT_FORMAT -o "$FILENAME.tmp"

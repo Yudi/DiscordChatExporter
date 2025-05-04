@@ -15,30 +15,36 @@ After extracting the `.zip`, open Command Prompt (`cmd`) on Windows or `Terminal
 Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press <kbd>⏎ Enter</kbd> to run the command.
 
 Drag and drop the folder to the terminal to automatically fill in the path.
+
+## Step 1
+
+After extracting the `.zip` archive, open your preferred terminal.
+
+## Step 2
+
+Change the current directory to DCE's folder with `cd C:\path\to\DiscordChatExporter` (`cd /path/to/DiscordChatExporter` on **MacOS** and **Linux**), then press ENTER to run the command.
+
+**Windows** users can quickly get the folder's path by clicking the address bar while inside the folder.
+![Copy path from Explorer](https://i.imgur.com/XncnhC2.gif)
+
+**macOS** users can press Command+Option+C (⌘⌥C) while inside the folder (or selecting it) to copy its path to the clipboard.
+
+You can also drag and drop the folder on **every platform**.
 ![Drag and drop folder](https://i.imgur.com/sOpZQAb.gif)
 
 ## Step 3
 
-Now we're ready to run the commands. The examples on this page follow the Windows file path format, change the file
-paths according to your system.
+Now we're ready to run the commands.
 
 On **Windows**, type the following command in your terminal of choice, then press <kbd>⏎ Enter</kbd> to run it. This will list all available subcommands and options.
+Type the following command in your terminal of choice, then press ENTER to run it. This will list all available subcommands and options.
 
 ```console
-DiscordChatExporter.Cli.exe
+./DiscordChatExporter.Cli
 ```
 
-On **macOS** and **Linux**, run the following instead:
-
-```console
-./DiscordChatExporter.Cli.sh
-```
-
-If either of the above approaches don't work for you, you can also run **DiscordChatExporter** directly like this, regardless of the platform:
-
-```console
-dotnet DiscordChatExporter.Cli.dll
-```
+> **Note**:
+> On Windows, if you're using the default Command Prompt (`cmd`), omit the leading `./` at the start of the command.
 
 > **Docker** users, refer to the [Docker usage instructions](Docker.md).
 
@@ -55,18 +61,18 @@ dotnet DiscordChatExporter.Cli.dll
 | guilds      | Outputs the list of accessible servers               |
 | guide       | Explains how to obtain token, server, and channel ID |
 
-To use the commands, you'll need a token. For the instructions on how to get a token, refer to [this page](Token-and-IDs.md), or run `dotnet DiscordChatExporter.Cli.dll guide`.
+To use the commands, you'll need a token. For the instructions on how to get a token, please refer to [this page](Token-and-IDs.md), or run `./DiscordChatExporter.Cli guide`.
 
 To get help with a specific command, run:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll command --help
+./DiscordChatExporter.Cli command --help
 ```
 
 For example, to figure out how to use the `export` command, run:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export --help
+./DiscordChatExporter.Cli export --help
 ```
 
 ## Export a specific channel
@@ -74,7 +80,7 @@ dotnet DiscordChatExporter.Cli.dll export --help
 You can quickly export with DCE's default settings by using just `-t token` and `-c channelid`.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555
 ```
 
 #### Changing the format
@@ -83,7 +89,7 @@ You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` 
 format is `HtmlDark`.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -f Json
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -f Json
 ```
 
 #### Changing the output filename
@@ -91,7 +97,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -f Json
 You can change the filename by using `-o name.ext`. e.g. for the `HTML` format:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o myserver.html
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o myserver.html
 ```
 
 #### Changing the output directory
@@ -101,7 +107,7 @@ extension.
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports"
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports"
 ```
 
 #### Changing the filename and output directory
@@ -111,7 +117,7 @@ Note that the filename must have an extension, otherwise it will be considered a
 If any of the folders in the path have a space in its name, escape them with quotes (").
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\myserver.html"
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\myserver.html"
 ```
 
 #### Generating the filename and output directory dynamically
@@ -119,7 +125,7 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord 
 You can use template tokens to generate the output file path based on the server and channel metadata.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html"
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -o "C:\Discord Exports\%G\%T\%C.html"
 ```
 
 Assuming you are exporting a channel named `"my-channel"` in the `"Text channels"` category from a server
@@ -138,6 +144,7 @@ Here is the full list of supported template tokens:
 - `%P` - category position
 - `%a` - the "after" date
 - `%b` - the "before" date
+- `%d` - the current date
 - `%%` - escapes `%`
 
 #### Partitioning
@@ -146,13 +153,13 @@ You can use partitioning to split files after a given number of messages or file
 For example, a channel with 36 messages set to be partitioned every 10 messages will output 4 files.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -p 10
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -p 10
 ```
 
 A 45 MB channel set to be partitioned every 20 MB will output 3 files.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 -p 20mb
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -p 20mb
 ```
 
 #### Downloading assets
@@ -163,7 +170,7 @@ downloaded when using the plain text (TXT) export format.
 A folder containing the assets will be created along with the exported chat. They must be kept together.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --media
 ```
 
 #### Reusing assets
@@ -172,7 +179,7 @@ Previously downloaded assets can be reused to skip redundant downloads as long a
 same folder. Using this option can speed up future exports. This option requires the `--media` option.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media --reuse-media
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --media --reuse-media
 ```
 
 #### Changing the media directory
@@ -181,7 +188,7 @@ By default, the media directory is created alongside the exported chat. You can 
 providing a path that ends with a slash. All of the exported media will be stored in this directory.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --media --media-dir "C:\Discord Media"
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --media --media-dir "C:\Discord Media"
 ```
 
 #### Changing the date format
@@ -190,7 +197,7 @@ You can customize how dates are formatted in the exported files by using `--loca
 locales. The default locale is `en-US`.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --locale "de-DE"
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --locale "de-DE"
 ```
 
 #### Date ranges
@@ -199,14 +206,14 @@ dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --locale "de-DE
 Use `--before` to export messages sent before the provided date. E.g. messages sent before September 18th, 2019:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --before 2019-09-18
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --before 2019-09-18
 ```
 
 **Messages sent after a date**
 Use `--after` to export messages sent after the provided date. E.g. messages sent after September 17th, 2019 11:34 PM:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34"
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34"
 ```
 
 **Messages sent in a date range**
@@ -214,7 +221,7 @@ Use `--before` and `--after` to export messages sent during the provided date ra
 September 17th, 2019 11:34 PM and September 18th:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34" --before "2019-09-18"
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --after "2019-09-17 23:34" --before "2019-09-18"
 ```
 
 You can try different formats like `17-SEP-2019 11:34 PM` or even refine your ranges down to
@@ -222,12 +229,22 @@ milliseconds `17-SEP-2019 23:45:30.6170`!
 Don't forget to quote (") the date if it has spaces!
 [More info about .NET date formats](https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings).
 
+#### Filtering messages
+
+Use `--filter` to filter what messages are included in the export.
+
+```console
+./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 --filter "from:Tyrrrz has:image"
+```
+
+Documentation on message filter syntax can be found [here](https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs/Message-filters.md).
+
 ### Export channels from a specific server
 
 To export all channels in a specific server, use the `exportguild` command and provide the server ID through the `-g|--guild` option:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814
+./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814
 ```
 
 #### Including threads
@@ -237,7 +254,7 @@ specifying which threads should be included. It has possible values of `none`, `
 threads should be included. To include both active and archived threads, use `--include-threads all`.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814 --include-threads all
+./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814 --include-threads all
 ```
 
 #### Including voice channels
@@ -247,7 +264,7 @@ specifying whether to include voice channels in the export. It has possible valu
 voice channels, use `--include-vc false`.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814 --include-vc false
+./DiscordChatExporter.Cli exportguild -t "mfa.Ifrn" -g 21814 --include-vc false
 ```
 
 ### Export all channels
@@ -255,7 +272,7 @@ dotnet DiscordChatExporter.Cli.dll exportguild -t "mfa.Ifrn" -g 21814 --include-
 To export all accessible channels, use the `exportall` command:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn"
+./DiscordChatExporter.Cli exportall -t "mfa.Ifrn"
 ```
 
 #### Excluding DMs
@@ -263,7 +280,7 @@ dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn"
 To exclude DMs, add the `--include-dm false` option.
 
 ```console
-dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
+./DiscordChatExporter.Cli exportall -t "mfa.Ifrn" --include-dm false
 ```
 
 ### List channels in a server
@@ -271,7 +288,7 @@ dotnet DiscordChatExporter.Cli.dll exportall -t "mfa.Ifrn" --include-dm false
 To list the channels available in a specific server, use the `channels` command and provide the server ID through the `-g|--guild` option:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814
+./DiscordChatExporter.Cli channels -t "mfa.Ifrn" -g 21814
 ```
 
 To save the list to a file, follow the `channels` command with the output redirection operator `>` and the path the list should be saved to:
@@ -285,7 +302,7 @@ dotnet DiscordChatExporter.Cli.dll channels -t "mfa.Ifrn" -g 21814 > C:\path\to\
 To list all DM channels accessible to the current account, use the `dm` command:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn"
+./DiscordChatExporter.Cli dm -t "mfa.Ifrn"
 ```
 
 ### List servers
@@ -293,5 +310,5 @@ dotnet DiscordChatExporter.Cli.dll dm -t "mfa.Ifrn"
 To list servers accessible by the current account to a file, use the `guilds` command:
 
 ```console
-dotnet DiscordChatExporter.Cli.dll guilds -t "mfa.Ifrn"
+./DiscordChatExporter.Cli guilds -t "mfa.Ifrn" > C:\path\to\output.txt
 ```
