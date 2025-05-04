@@ -1,10 +1,16 @@
 # Scheduling exports with Cron
 
+## What is Cron?
+
+Cron is a time-based job scheduler in Unix-like operating systems such as Linux and macOS. It allows users to schedule jobs (commands or scripts) to run at specific intervals or times.
+
 ## Creating the script
 
-1. Open Terminal and set the script's path to a variable with `SCRIPT_PATH="/path/to/DiscordChatExporter.Cli/cron-script.sh"` so you don't have to type it repeatedly.
+1. Open Terminal
 
-2. Create a new text file with `nano "$SCRIPT_PATH"`
+2. Set the script's path to a variable with `SCRIPT_PATH="/path/to/DiscordChatExporter.Cli/cron-script.sh"` so you don't have to type it repeatedly
+
+3. Create a new text file with `nano "$SCRIPT_PATH"`
 
 > [!TIP]
 > You can't use your mouse in nano, use the arrow keys to control the cursor (caret).
@@ -13,78 +19,109 @@
 
 ```bash
 #!/bin/bash
-# Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
+# DiscordChatExporter - Cron Script
+# Project Info: https://github.com/Tyrrrz/DiscordChatExporter
 
-TOKEN="tokenHere"
-CHANNEL_ID="channelIdHere"
-DCE_FOLDER="dceFolderHere"
-EXPORT_FOLDER="exportFolderhere"
-FILENAME="filenameHere"
-EXPORT_FORMAT="formatHere"
-# Available export formats: PlainText, HtmlDark, HtmlLight, Json, Csv
-# You can't use partitioning (-p) and dynamic output (-o %) with this script.
-# You can edit the export command on line 47 if you'd like to include more options like date ranges and date format.
+# -e - exit immediately if a command exits with a non-zero status
+# -u - treat unset variables as an error when substituting
+# -o pipefail - return the exit status of the last command in the pipeline that failed
+set -euo pipefail
 
-# This will convert EXPORT_FORMAT to lowercase.
-EXPORT_FORMAT=$(echo $EXPORT_FORMAT | tr '[:upper:]' '[:lower:]')
+##########################
+# Configuration Section  #
+##########################
 
-# This will verify if EXPORT_FORMAT is valid.
-# FILE_EXTENSION will be used in the final filename.
-case "$EXPORT_FORMAT" in
-plaintext)
-  FILE_EXTENSION=txt
-  ;;
-htmldark | htmllight)
-  FILE_EXTENSION=html
-  ;;&
-json)
-  FILE_EXTENSION=json
-  ;;
-csv)
-  FILE_EXTENSION=csv
-  ;;
-*)
- # If the format is not listed (invalid), the script will exit.
-  echo "$EXPORT_FORMAT is not a valid export format. Exiting."
-  exit 1
-  ;;
-esac
+# Edit the following variables to configure the script
+# Make sure to not delete the quotes (") when inserting your values
 
-# This will set the script's directory to DCE_FOLDER.
-# If unable to do so, the script will exit.
-cd $DCE_FOLDER || exit 1
+TOKEN=""            # Your bot/user token
+CHANNEL_ID=""       # Discord channel ID
+DCE_FOLDER=""       # Folder containing DiscordChatExporter.Cli.sh
+EXPORT_FOLDER=""    # Output folder for exported file
+FILENAME=""         # Base name for the exported file
+EXPORT_FORMAT=""    # Options: PlainText, HtmlDark, HtmlLight, Json, Csv
 
-# This will export your chat.
-# If unable to do so, the script will exit.
-if ! ./DiscordChatExporter.Cli.sh export -t "$TOKEN" -c "$CHANNEL_ID" -f "$EXPORT_FORMAT" -o "$FILENAME.tmp"; then
-  echo "Failed to export chat. Exiting."
-  exit 1
-fi
+##########################
+# Helper Functions       #
+##########################
 
-# This sets the current time to a variable so it can be used in the filename.
-CURRENTTIME=$(date +"%Y-%m-%d-%H-%M-%S")
+error_exit() {
+    echo "[ERROR] $1"
+    exit 1
+}
 
-# This will move the .tmp file to the desired export location.
-# If unable to do so, it will attempt to delete the .tmp file.
-if ! mv "$FILENAME.tmp" "$EXPORT_FOLDER/$FILENAME-$CURRENTTIME.$FILE_EXTENSION"; then
-  echo "Unable to move $FILENAME.tmp to $EXPORT_FOLDER/$FILENAME-$CURRENTTIME.$FILE_EXTENSION."
-  echo "Cleaning up..."
-  if ! rm -Rf "$FILENAME.tmp"; then
-    echo "Unable to delete $FILENAME.tmp. Exiting."
-  fi
-  exit 1
-fi
-exit 0
+validate_inputs() {
+    [[ -z "$TOKEN" ]] && error_exit "TOKEN is not set."
+    [[ -z "$CHANNEL_ID" ]] && error_exit "CHANNEL_ID is not set."
+    [[ -z "$DCE_FOLDER" ]] && error_exit "DCE_FOLDER is not set."
+    [[ -z "$EXPORT_FOLDER" ]] && error_exit "EXPORT_FOLDER is not set."
+    [[ -z "$FILENAME" ]] && error_exit "FILENAME is not set."
+    [[ -z "$EXPORT_FORMAT" ]] && error_exit "EXPORT_FORMAT is not set."
+}
+
+# Function to get the file extension based on the export format
+get_file_extension() {
+    local format_lc
+    # Convert the export format to lowercase for case-insensitive comparison
+    # This helps avoid issues with the user inputting the format in different cases
+    format_lc=$(echo "$EXPORT_FORMAT" | tr '[:upper:]' '[:lower:]')
+    case "$format_lc" in
+        plaintext) echo "txt" ;;
+        htmldark | htmllight) echo "html" ;;
+        json) echo "json" ;;
+        csv) echo "csv" ;;
+        *) error_exit "\"$EXPORT_FORMAT\" is not a valid export format. Valid options: PlainText, HtmlDark, HtmlLight, Json, Csv." ;;
+    esac
+}
+
+# Function to export the chat using DiscordChatExporter
+export_chat() {
+    cd "$DCE_FOLDER" || error_exit "Failed to change directory to $DCE_FOLDER"
+    echo "[INFO] Exporting chat..."
+    ./DiscordChatExporter.Cli.sh export \
+        -t "$TOKEN" \
+        -c "$CHANNEL_ID" \
+        -f "$EXPORT_FORMAT" \
+        -o "${FILENAME}.tmp" || error_exit "Export failed"
+}
+
+# Function to finalize the export by renaming and moving the file
+finalize_export() {
+    local timestamp output_file
+    # Get the current timestamp in the format YYYY-MM-DD-HH-MM-SS
+    # This will be used to create a unique filename for the exported chat
+    # Otherwise, the file would be overwritten each time the script runs
+    timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
+    output_file="${EXPORT_FOLDER}/${FILENAME}-${timestamp}.${FILE_EXTENSION}"
+
+    echo "[INFO] Moving exported file to: $output_file"
+    if ! mv "${FILENAME}.tmp" "$output_file"; then
+        echo "[WARN] Failed to move file. Cleaning up..."
+        rm -f "${FILENAME}.tmp" || echo "[WARN] Could not delete temporary file."
+        error_exit "Failed to move exported file."
+    fi
+    echo "[SUCCESS] Chat exported to: $output_file"
+}
+
+##########################
+# Main Execution         #
+##########################
+
+validate_inputs
+FILE_EXTENSION=$(get_file_extension)
+export_chat
+finalize_export
+
 ```
 
-4. Replace:
+4. On the configuration section, replace insert the values between the quotes:
 
-- `tokenHere` with your [Token](Token-and-IDs.md).
-- `channelIdHere` with a [Channel ID](Token-and-IDs.md).
-- `dceFolderHere` with DCE's **folder** path (e.g. `"/path/to/DCE.Cli"`, not `"/path/to/DCE.Cli/DiscordChatExporter.dll"`).
-- `exportFolderhere` with the directory the exported chats will be saved to (e.g. `"/home/user/Documents/Discord Exports"`).
-- `filenamehere` with the exported channel's filename.
-- `formatHere` with one of the available export formats.
+- `TOKEN`: Insert the [Token](Token-and-IDs.md).
+- `CHANNEL_ID`: Insert a [Channel ID](Token-and-IDs.md).
+- `DCE_FOLDER`: DCE's **folder** path (e.g. `"/path/to/DCE.Cli"`, not `"/path/to/DCE.Cli/DiscordChatExporter.dll"`).
+- `EXPORT_FOLDER`: Directory the exported chats will be saved to (e.g. `"/home/user/Documents/Discord Exports"`).
+- `FILENAME`: Exported channel's filename.
+- `EXPORT_FORMAT`: Export format. Options: `PlainText`, `HtmlDark`, `HtmlLight`, `Json`, `Csv`.
 
 > [!IMPORTANT]  
 > Make sure not to delete the quotes (") when replacing: `DCE_FOLDER="/home/my user/DCE"`.
@@ -92,13 +129,13 @@ exit 0
 
 > [!TIP]
 > To save, hold down <kbd>Ctrl</kbd> and then press <kbd>O</kbd>. Press <kbd>Ctrl</kbd> + <kbd>X</kbd> to exit the text editor.  
-> [Check out the Gentoo Nano Guide](https://wiki.gentoo.org/wiki/Nano/Guide) if you want to know more about Nano.
+> [Check out the Gentoo Nano Guide](https://wiki.gentoo.org/wiki/Nano/Guide) if you want to know more about `nano`.
 
 5. Make your script executable with `chmod +x "$SCRIPT_PATH"`
 
 6. To run the script with user privileges, edit the cron file with `crontab -e` (preferred).  
    To run the script as root, edit it with `sudo crontab -e`.  
-   If you're running this command for the first time, you might be asked to select a text editor: Press <kbd>1</kbd> and then <kbd>⏎ Enter</kbd> to confirm nano as your text editor.
+   If you're running this command for the first time, you might be asked to select a text editor: Press <kbd>1</kbd> and then <kbd>⏎ Enter</kbd> to confirm `nano` as your text editor.
 
 7. Add the following to the end of the file:
 
@@ -107,12 +144,12 @@ exit 0
 ```
 
 > [!IMPORTANT]  
-> Replace `"/path/to/DiscordChatExporter.Cli/cron-script.sh"`!
+> Replace `"/path/to/DiscordChatExporter.Cli/cron-script.sh"` with the path to your script.
 
 > [!TIP]
 > If you don't want logs to be saved, replace both `/tmp/discordchatexporter[error].log` with `/dev/null`.
 
-Then replace the \*s according to:
+Then replace the asterisks (`*`) with the desired schedule as follows:
 
 ![](https://i.imgur.com/RY7USM6.png)
 
@@ -125,7 +162,7 @@ Then replace the \*s according to:
 - Every day at 3, 4 and 6 PM: `0 15,16,18 * * *`
 - Every Wednesday at 9 AM: `0 9 * * 3`
 
-Verify your cron time [here](https://crontab.guru).
+Verify if your cron time is correct with [crontab.guru](https://crontab.guru).
 
 ## Additional information
 
