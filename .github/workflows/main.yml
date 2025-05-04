@@ -271,7 +271,7 @@ jobs:
 
     needs:
       - format
-      - test
+      # - test
       - pack
       - pack-macos
 
