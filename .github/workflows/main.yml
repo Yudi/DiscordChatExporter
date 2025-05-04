@@ -104,8 +104,8 @@ jobs:
           - linux-musl-x64
           - linux-x64
           # The two macOS builds will be used to create a universal binary in the pack-macos job
-          - macos-arm64
-          - macos-x64
+          - osx-arm64
+          - osx-x64
         include:
           - app: DiscordChatExporter.Cli
             asset: DiscordChatExporter.Cli
@@ -113,7 +113,7 @@ jobs:
             # GUI assets aren't suffixed, unlike the CLI assets
             asset: DiscordChatExporter
 
-    runs-on: ${{ startsWith(matrix.rid, 'win-') && 'windows-latest' || startsWith(matrix.rid, 'macos-') && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ${{ startsWith(matrix.rid, 'win-') && 'windows-latest' || startsWith(matrix.rid, 'osx-') && 'macos-latest' || 'ubuntu-latest' }}
     timeout-minutes: 10
 
     permissions:
@@ -147,7 +147,7 @@ jobs:
           if-no-files-found: error
 
   pack-macos:
-    runs-on: macos-latest
+    runs-on: osx-latest
     timeout-minutes: 10
 
     # This now needs to run after the individual arch builds are complete
@@ -176,13 +176,13 @@ jobs:
       - name: Download macOS arm64 artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: ${{ matrix.asset }}.macos-arm64
+          name: ${{ matrix.asset }}.osx-arm64
           path: ${{ matrix.app }}/bin/publish/
 
       - name: Download macOS x64 artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: ${{ matrix.asset }}.macos-x64
+          name: ${{ matrix.asset }}.osx-x64
           path: ${{ matrix.app }}/bin/publish/
 
       - name: Create macOS universal binaries
@@ -190,8 +190,8 @@ jobs:
           # Lipo is Apple's tool for creating universal binaries
           lipo -create \
             -output ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal \
-            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-arm64 \
-            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-x64
+            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64 \
+            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64
 
           # Set executable permissions
           chmod +x ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal
@@ -252,10 +252,10 @@ jobs:
 
           # For CLI, just zip the universal binary and supporting files
           if [[ "${{ matrix.app }}" == "DiscordChatExporter.Cli" ]]; then
-            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.macos-arm64" -x "*.macos-x64" -x "*.app/*"
+            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.osx-arm64" -x "*.osx-x64" -x "*.app/*"
           else
             # For GUI, zip both the standalone binary and the .app bundle
-            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.macos-arm64" -x "*.macos-x64"
+            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.osx-arm64" -x "*.osx-x64"
           fi
 
       # Upload the universal binary packages as artifacts
@@ -331,11 +331,11 @@ jobs:
           path: ${{ matrix.app }}/
 
       - name: Set permissions
-        if: ${{ !startsWith(matrix.rid, 'win-') || !startsWith(matrix.rid, 'macos-') }}
+        if: ${{ !startsWith(matrix.rid, 'win-') || !startsWith(matrix.rid, 'osx-') }}
         run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
 
       - name: Create package
-        if: ${{ !startsWith(matrix.rid, 'macos-') }}
+        if: ${{ !startsWith(matrix.rid, 'osx-') }}
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
         run: zip -r ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
