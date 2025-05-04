@@ -1,13 +1,15 @@
 # Obtaining Token and Channel IDs
 
-> [!WARNING]
+> [!WARNING]  
 > **Do not share your token!** A token gives full access to an account.  
 > To reset a user token, change your account password.  
 > To reset a bot token, click on [Reset Token](#how-to-export-with-a-bot-token) in the bot settings.
 
 ## How to get a user token
 
-**Caution:** [Automating user accounts violates Discord's terms of service](https://support.discord.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-) and may result in account termination. Use at your own risk.
+> [!CAUTION]  
+> [Automating user accounts violates Discord's terms of service](https://support.discord.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-) and may result in account termination. Use at your own risk.  
+> Bot accounts do not have this restriction.
 
 ### Through your web browser
 
@@ -17,7 +19,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the console
 
-1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
+1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥⌘I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
 
 <br clear="right" />
 <br />
@@ -26,15 +28,16 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 3. Type
 
-    ```js
+   <!-- prettier-ignore -->
+   ```js
     (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
     ```
 
-    into the console and press <kbd>Enter</kbd>. The console will display your user token.
+   into the console and press <kbd>Enter</kbd>. The console will display your user token.
 
 ##### Using the network monitor
 
-1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
+1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥⌘I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
 
 <br clear="right" />
 <br />
@@ -71,12 +74,12 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the storage inspector
 
-1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview/) will display.
+1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥⌘I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview/) will display.
 
 <br clear="right" />
 <br />
 
-2. <img width="500" align="right" src="https://i.imgur.com/biAUIop.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (<kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd>). Chrome will enter [Device Mode](https://developer.chrome.com/docs/devtools/device-mode/), and the webpage will display as if on a mobile device.
+2. <img width="500" align="right" src="https://i.imgur.com/biAUIop.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (<kbd>⇧⌘M</kbd>). Chrome will enter [Device Mode](https://developer.chrome.com/docs/devtools/device-mode/), and the webpage will display as if on a mobile device.
 
 <br clear="right" />
 <br />
@@ -96,12 +99,12 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-6. <img width="500" align="right" src="https://i.imgur.com/caj3lQq.png" />Click the `token` entry. (Note: if the token doesn't display, try refreshing by pressing <kbd>F5</kbd> or <kbd>⌘</kbd>+<kbd>R</kbd> on macOS)
+6. <img width="500" align="right" src="https://i.imgur.com/caj3lQq.png" />Click the `token` entry. (Note: if the token doesn't display, try refreshing by pressing <kbd>F5</kbd> [<kbd>⌘R</kbd>])
 
 <br clear="right" />
 <br />
 
-7. <img width="500" align="right" src="https://i.imgur.com/SwWFIH4.png" />Click the text box at the bottom, press <kbd>Ctrl</kbd>+<kbd>A</kbd> (<kbd>⌘</kbd>+<kbd>A</kbd> on macOS) then <kbd>Ctrl</kbd>+<kbd>C</kbd> (<kbd>⌘</kbd>+<kbd>C</kbd> on macOS) to copy the value to your clipboard.
+7. <img width="500" align="right" src="https://i.imgur.com/SwWFIH4.png" />Click the text box at the bottom, press <kbd>Ctrl</kbd>+<kbd>A</kbd> (<kbd>⌘A</kbd>) then <kbd>Ctrl</kbd>+<kbd>C</kbd> (<kbd>⌘C</kbd>) to copy the value to your clipboard.
 
 <br clear="right" />
 <br />
@@ -110,7 +113,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the console
 
-1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>K</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [web console](https://firefox-source-docs.mozilla.org/devtools-user/console/index.html) will display.
+1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (<kbd>⌥⌘K</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [web console](https://firefox-source-docs.mozilla.org/devtools-user/console/index.html) will display.
 
 <br clear="right" />
 <br />
@@ -119,20 +122,21 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 1. Type
 
-    ```js
+   <!-- prettier-ignore -->
+   ```js
     (webpackChunkdiscord_app.push([[''],{},e=>{m=[];for(let c in e.c)m.push(e.c[c])}]),m).find(m=>m?.exports?.default?.getToken!==void 0).exports.default.getToken()
     ```
 
-    into the console and press <kbd>Enter</kbd>. The console will display your user token.
+   into the console and press <kbd>Enter</kbd>. The console will display your user token.
 
 ##### Using the network monitor
 
-1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>E</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [network monitor](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/) will display.
+1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> (<kbd>⌥⌘E</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [network monitor](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/) will display.
 
 <br clear="right" />
 <br />
 
-2. <img width="500" align="right" src="https://i.imgur.com/j00QzhU.png" />Press <kbd>F5</kbd>. The page will reload, and the [network request list](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_list/index.html) will populate with entries.
+2. <img width="500" align="right" src="https://i.imgur.com/j00QzhU.png" />Press <kbd>F5</kbd> (<kbd>⌘R</kbd>). The page will reload, and the [network request list](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_list/index.html) will populate with entries.
 
 <br clear="right" />
 <br />
@@ -169,7 +173,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-2. <img width="500" align="right" src="https://i.imgur.com/TGcbB7f.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (<kbd>⌥</kbd>+<kbd>⌘</kbd>+<kbd>M</kbd> on macOS). Firefox will toggle [responsive design mode](https://firefox-source-docs.mozilla.org/devtools-user/responsive_design_mode/), and the web page will display as if on a mobile device. (Note: Discord may steal focus and respond to the command by toggling mute. If this happens, return focus to Firefox’s web developer tools by clicking somewhere in it, then try the command again.)
+2. <img width="500" align="right" src="https://i.imgur.com/TGcbB7f.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (<kbd>⌥⌘M</kbd> on macOS). Firefox will toggle [responsive design mode](https://firefox-source-docs.mozilla.org/devtools-user/responsive_design_mode/), and the web page will display as if on a mobile device. (Note: Discord may steal focus and respond to the command by toggling mute. If this happens, return focus to Firefox’s web developer tools by clicking somewhere in it, then try the command again.)
 
 <br clear="right" />
 <br />
@@ -199,9 +203,11 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-### Through the desktop app / enabling web developer tools
+### Through the desktop app
 
-#### By editing the settings file
+#### Enable web developer tools
+
+##### By editing the settings file
 
 1. If Discord is running, exit the application by right-clicking the icon in your taskbar tray and clicking `Quit Discord`.
 
@@ -235,7 +241,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 5. To find your user token, continue [here](#in-chrome).
 
-#### Via settings menu (BetterDiscord only)
+##### Via settings menu on BetterDiscord
 
 1. <img width="500" align="right" src="https://i.imgur.com/mu1g4OF.png" />Click the User Settings button (the gear icon to the right of your username). Discord’s settings page will open.
 
@@ -303,10 +309,10 @@ If you don't have a bot token yet or if you've lost it, follow these steps to re
 4. Under **Token** click **Reset Token**
 5. Click **Yes, do it!** and authenticate to confirm
 
-> **Tip**:
+> [!TIP]
 > As the token is only shown once, make sure to store it in a safe place. If you lose the token, you will have to reset it again.
 
-> **Warning**:
+> [!WARNING]
 > Resetting the token will invalidate the old one. Any integrations relying on the old token will cease to function until they are updated.
 
 ![https://discord.com/developers/applications/](https://i.imgur.com/soiB8Qc.png)
