@@ -177,19 +177,13 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: ${{ matrix.asset }}.osx-arm64
-          path: ${{ matrix.app }}/bin/publish/
+          path: ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64
 
       - name: Download macOS x64 artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: ${{ matrix.asset }}.osx-x64
-          path: ${{ matrix.app }}/bin/publish/
-
-      - name: Debug ls directory
-        run: |
-          ls -la ${{ matrix.app }}/bin/publish/ 
-          ls -la ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64
-          ls -la ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64
+          path: ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64
 
       - name: Create macOS universal binaries
         run: |
