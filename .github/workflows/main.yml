@@ -147,7 +147,7 @@ jobs:
           if-no-files-found: error
 
   pack-macos:
-    runs-on: osx-latest
+    runs-on: macos-latest
     timeout-minutes: 10
 
     # This now needs to run after the individual arch builds are complete
