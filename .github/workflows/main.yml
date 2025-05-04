@@ -96,13 +96,13 @@ jobs:
           - DiscordChatExporter.Cli
           - DiscordChatExporter.Gui
         rid:
-          - win-arm64
-          - win-x86
-          - win-x64
-          - linux-arm
-          - linux-arm64
-          - linux-musl-x64
-          - linux-x64
+          # - win-arm64
+          # - win-x86
+          # - win-x64
+          # - linux-arm
+          # - linux-arm64
+          # - linux-musl-x64
+          # - linux-x64
           # The two macOS builds will be used to create a universal binary in the pack-macos job
           - osx-arm64
           - osx-x64
