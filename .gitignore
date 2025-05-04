@@ -10,3 +10,6 @@ obj/
 
 # Test results
 TestResults/
+
+# macOS
+.DS_Store

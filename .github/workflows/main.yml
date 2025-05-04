@@ -103,6 +103,7 @@ jobs:
           - linux-arm64
           - linux-musl-x64
           - linux-x64
+          # The two macOS builds will be used to create a universal binary in the pack-macos job
           - macos-arm64
           - macos-x64
         include:
@@ -145,6 +146,126 @@ jobs:
           path: ${{ matrix.app }}/bin/publish/
           if-no-files-found: error
 
+  pack-macos:
+    runs-on: macos-latest
+    timeout-minutes: 10
+
+    # This now needs to run after the individual arch builds are complete
+    needs: pack
+
+    strategy:
+      matrix:
+        app:
+          - DiscordChatExporter.Cli
+          - DiscordChatExporter.Gui
+        include:
+          - app: DiscordChatExporter.Cli
+            asset: DiscordChatExporter.Cli
+          - app: DiscordChatExporter.Gui
+            # GUI assets aren't suffixed, unlike the CLI assets
+            asset: DiscordChatExporter
+
+    permissions:
+      actions: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Download macOS arm64 artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ matrix.asset }}.macos-arm64
+          path: ${{ matrix.app }}/bin/publish/
+
+      - name: Download macOS x64 artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: ${{ matrix.asset }}.macos-x64
+          path: ${{ matrix.app }}/bin/publish/
+
+      - name: Create macOS universal binaries
+        run: |
+          # Lipo is Apple's tool for creating universal binaries
+          lipo -create \
+            -output ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal \
+            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-arm64 \
+            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-x64
+
+          # Set executable permissions
+          chmod +x ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal
+
+      - name: Pack Gui to .app bundle
+        if: matrix.app == 'DiscordChatExporter.Gui'
+        run: |
+          # Create the necessary directory structure for the .app bundle
+          mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
+          mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources
+
+          # Copy the universal binary to the MacOS directory
+          cp ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal \
+              ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }}
+
+          # Create Info.plist file
+          cat > ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Info.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>DiscordChatExporter</string>
+              <key>NSHumanReadableCopyright</key>
+              <string>Copyright (c) Oleksii Holub</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.tyrrrz.${{ matrix.asset }}</string>
+              <key>CFBundleName</key>
+              <string>${{ matrix.asset }}</string>
+              <key>CFBundleDisplayName</key>
+              <string>DiscordChatExporter</string>
+              <key>CFBundleVersion</key>
+              <string>${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}</string>
+              <key>CFBundleShortVersionString</key>
+              <string>${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}</string>
+              <key>NSHighResolutionCapable</key>
+              <true/>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+          </dict>
+          </plist>
+          EOF
+
+          # Copy all files to the .app bundle
+          cp -R ${{ matrix.app }}/bin/publish/* ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS/
+
+          # TODO: convert icon
+          # Copy the icon file if it exists
+          if [ -f "favicon.icns" ]; then
+            cp favicon.icns ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources/
+          fi
+
+      # Create zip archives for the universal binaries
+      - name: Create universal binary zip archives
+        run: |
+          # Go to the publish directory
+          cd ${{ matrix.app }}/bin/publish/
+
+          # For CLI, just zip the universal binary and supporting files
+          if [[ "${{ matrix.app }}" == "DiscordChatExporter.Cli" ]]; then
+            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.macos-arm64" -x "*.macos-x64" -x "*.app/*"
+          else
+            # For GUI, zip both the standalone binary and the .app bundle
+            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.macos-arm64" -x "*.macos-x64"
+          fi
+
+      # Upload the universal binary packages as artifacts
+      - name: Upload universal binary artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ matrix.asset }}.macos-universal
+          path: ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal.zip
+          if-no-files-found: error
+
   release:
     if: ${{ github.ref_type == 'tag' }}
 
@@ -152,6 +273,7 @@ jobs:
       - format
       - test
       - pack
+      - pack-macos
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -186,8 +308,7 @@ jobs:
           - linux-arm64
           - linux-musl-x64
           - linux-x64
-          - macos-arm64
-          - macos-x64
+          - macos-universal
         include:
           - app: DiscordChatExporter.Cli
             asset: DiscordChatExporter.Cli
@@ -210,10 +331,11 @@ jobs:
           path: ${{ matrix.app }}/
 
       - name: Set permissions
-        if: ${{ !startsWith(matrix.rid, 'win-') }}
+        if: ${{ !startsWith(matrix.rid, 'win-') || !startsWith(matrix.rid, 'macos-') }}
         run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
 
       - name: Create package
+        if: ${{ !startsWith(matrix.rid, 'macos-') }}
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
         run: zip -r ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
