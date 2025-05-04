@@ -10,15 +10,25 @@
 
 ### Step 1 - Download, extract and run
 
-1. Download the latest version of DCE from the [releases page](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest).
-2. Extract the `.zip` file to a folder of your choice.
+To download, visit to the [**latest releases page**](https://github.com/Tyrrrz/DiscordChatExporter/releases/latest).
+
+<!-- The platforms list below is replicated on Getting-started.md to help beginners.
+     If you change it here, change it there too. -->
+
+- **Windows:**
+  - Not sure about your system specifications? Download `DiscordChatExporter.win-x64.zip`.
+- **macOS:**
+  - If your Mac has [**Apple silicon**](https://support.apple.com/116943), download the `DiscordChatExporter.macos-arm64.zip` file.
+  - If your Mac has an **Intel** processor, download the `DiscordChatExporter.macos-x64.zip` file.
+- **Linux**:
+  - Look for files with the `DiscordChatExporter.linux-*.zip` suffix.  
+    Choose the one matching your system architecture.
+
+Extract the downloaded `.zip` file to a folder of your choice.
 
 If you are using **Windows**, open `DiscordChatExporter.exe`.  
+If you are using **macOS**, use the instructions provided in [macOS workaround](macOS-workaround.md).
 If you are using **Linux**, open `DiscordChatExporter`.
-
-<!-- todo write -->
-
-If you are using **macOS**,
 
 ### Step 2 - Authenticate
 
@@ -36,7 +46,7 @@ If the instructions seem unclear, check the detailed guide on [how to obtain you
 DCE will display your Direct Messages and a sidebar with your server list. Select the channel you'd like to export, then click the ![](https://i.imgur.com/dnTOlDa.png) button to continue.
 
 > [!TIP]
-> You can export multiple channels at once by holding `CTRL` or `SHIFT` while selecting.  
+> You can export multiple channels at once by holding <kbd>Ctrl</kbd> (⌘ on macOS) or <kbd>Shift</kbd> while selecting.  
 > You can also double-click a channel to export it directly.
 
 <img src="https://i.imgur.com/JHMFRh2.png" height="400"/>
@@ -72,8 +82,8 @@ In this screen you can customize your export. You need to scroll down to see all
 - **Auto-update** - Perform automatic updates on every launch.  
   Default: Enabled
 
-  > **Note**:
-  > Keep this option enabled to receive the latest features and bug fixes!
+> [!NOTE]
+> Keep auto-updates enabled to receive the latest features and bug fixes!
 
 - **Dark mode** - Use darker colors in the User Interface (UI).  
   Default: Disabled

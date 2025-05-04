@@ -3,50 +3,45 @@
 ## Guide
 
 > [!NOTE]  
-> Make sure you have [.NET Core installed](Dotnet.md) before attempting to run the commands below.
-> **Docker** users, refer to the [Docker usage instructions](Docker.md).
+> If you're using **Docker**, refer to the [Docker usage instructions](Docker.md).
 
 ## Step 1
 
-After extracting the `.zip`, open Command Prompt (`cmd`) on Windows or `Terminal` if on **macOS** or **Linux**.
+After extracting the `.zip` file, open your preferred terminal application.  
+If you're on **Windows**, prefer `Windows Terminal` or `PowerShell`.
 
 ## Step 2
 
-Change the current directory to DCE's folder with `cd C:\path\to\directory`, then press <kbd>⏎ Enter</kbd> to run the command.
+Change the current directory to DCE's folder with `cd C:\path\to\DiscordChatExporter` (`cd /path/to/DiscordChatExporter` on **macOS** and **Linux**), then press <kbd>⏎ Enter</kbd> to run the command.
 
-Drag and drop the folder to the terminal to automatically fill in the path.
+<!--  This shortcut only works on Windows 11 22H2 and later, but users should've upgraded by now. -->
 
-## Step 1
+To get the path to the folder, you can use the following methods:
 
-After extracting the `.zip` archive, open your preferred terminal.
+On **Windows**, select the folder in File Explorer, then press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> to copy the folder's path to the clipboard.
 
-## Step 2
+On **macOS**, press <kbd>⌥⌘C</kbd> while inside the folder (or while selecting it) to copy its path to the clipboard.
 
-Change the current directory to DCE's folder with `cd C:\path\to\DiscordChatExporter` (`cd /path/to/DiscordChatExporter` on **MacOS** and **Linux**), then press ENTER to run the command.
-
-**Windows** users can quickly get the folder's path by clicking the address bar while inside the folder.
-![Copy path from Explorer](https://i.imgur.com/XncnhC2.gif)
-
-**macOS** users can press Command+Option+C (⌘⌥C) while inside the folder (or selecting it) to copy its path to the clipboard.
-
-You can also drag and drop the folder on **every platform**.
+You can also drag and drop the folder on **all platforms**.
 ![Drag and drop folder](https://i.imgur.com/sOpZQAb.gif)
 
 ## Step 3
 
-Now we're ready to run the commands.
+You're ready to run the commands.
 
-On **Windows**, type the following command in your terminal of choice, then press <kbd>⏎ Enter</kbd> to run it. This will list all available subcommands and options.
-Type the following command in your terminal of choice, then press ENTER to run it. This will list all available subcommands and options.
+On **Windows**, type the following command, then press <kbd>⏎ Enter</kbd> to run it. This will list all available subcommands and options.
 
 ```console
 ./DiscordChatExporter.Cli
 ```
 
-> **Note**:
-> On Windows, if you're using the default Command Prompt (`cmd`), omit the leading `./` at the start of the command.
+On **macOS** and **Linux**, type the following command, then press <kbd>⏎ Enter</kbd> to run it.
 
-> **Docker** users, refer to the [Docker usage instructions](Docker.md).
+<!-- TODO: test me -->
+
+```console
+dotnet DiscordChatExporter.Cli.dll
+```
 
 ## CLI commands
 
@@ -85,8 +80,8 @@ You can quickly export with DCE's default settings by using just `-t token` and 
 
 #### Changing the format
 
-You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f format`. The default
-format is `HtmlDark`.
+You can change the export format to `HtmlDark`, `HtmlLight`, `PlainText` `Json` or `Csv` with `-f format`.  
+The default format is `HtmlDark`.
 
 ```console
 ./DiscordChatExporter.Cli export -t "mfa.Ifrn" -c 53555 -f Json

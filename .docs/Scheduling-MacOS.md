@@ -2,7 +2,7 @@
 
 ## Creating the script
 
-1. Open TextEdit.app and create a new file
+1. Open TextEdit and create a new file (⌘N)
 
 2. Convert the file to a plain text one in 'Format > Make Plain Text' (⇧⌘T)
 
@@ -10,81 +10,123 @@
 
 3. Paste the following into the text editor:
 
+<!-- TODO test -->
+
 ```bash
 #!/bin/bash
-# Info: https://github.com/Tyrrrz/DiscordChatExporter/blob/master/.docs
+# DiscordChatExporter - macOS Script
+# Project Info: https://github.com/Tyrrrz/DiscordChatExporter
 
-TOKEN=tokenhere
-CHANNELID=channelhere
-DLLFOLDER=dceFOLDERpathhere
-FILENAME=filenamehere
-EXPORTDIRECTORY=dirhere
-EXPORTFORMAT=formathere
-# Available export formats: plaintext, htmldark, htmllight, json, csv
-# /\ CaSe-SeNsItIvE /\
-# You can edit the export command on line 43 if you'd like to include more options like date ranges and date format. You can't use partitioning (-p) with this script.
+# -e - exit immediately if a command exits with a non-zero status
+# -u - treat unset variables as an error when substituting
+# -o pipefail - return the exit status of the last command in the pipeline that failed
+set -euo pipefail
 
-# This variable specifies in which directories the executable programs are located. Don't change it.
-PATH=/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet
+##########################
+# Configuration Section  #
+##########################
 
-# This will verify if EXPORTFORMAT is valid and will set the final file extension according to it. If the format is invalid, the script will display a message and exit.
-if [[ "$EXPORTFORMAT" == "plaintext" ]]; then
-FORMATEXT=.txt
-elif [[ "$EXPORTFORMAT" == "htmldark" ]] || [[ "$EXPORTFORMAT" == "htmllight" ]]; then
-FORMATEXT=.html
-elif [[ "$EXPORTFORMAT" == "json" ]]; then
-FORMATEXT=.json
-elif [[ "$EXPORTFORMAT" == "csv" ]]; then
-FORMATEXT=.csv
-else
-echo "$EXPORTFORMAT - Unknown export format"
-echo "Available export formats: plaintext, htmldark, htmllight, csv, json"
-echo "/\ CaSe-SeNsItIvE /\\"
-exit 1
-fi
+# Edit the following variables to configure the script
+# Make sure to not delete the quotes (") when inserting your values
 
-# This will change the script's directory to DLLPATH, if unable to do so, the script will exit.
-cd $DLLFOLDER || exit 1
+TOKEN=""            # Your bot/user token
+CHANNEL_ID=""       # Discord channel ID
+DCE_FOLDER=""       # Folder containing DiscordChatExporter.Cli.sh
+EXPORT_FOLDER=""    # Output folder for exported file
+FILENAME=""         # Base name for the exported file
+EXPORT_FORMAT=""    # Options: PlainText, HtmlDark, HtmlLight, Json, Csv
 
-# This will export your chat
-./DiscordChatExporter.Cli export -t $TOKEN -c $CHANNELID -f $EXPORTFORMAT -o $FILENAME.tmp
+##########################
+# Helper Functions       #
+##########################
 
-# This sets the current time to a variable
-CURRENTTIME=$(date +"%Y-%m-%d-%H-%M-%S")
+error_exit() {
+    echo "[ERROR] $1"
+    exit 1
+}
 
-# This will move the .tmp file to the desired export location. If unable to do so, it will attempt to delete the .tmp file.
-if ! mv "$FILENAME.tmp" "${EXPORTDIRECTORY//\"}/$FILENAME-$CURRENTTIME$FORMATEXT" ; then
-echo "Unable to move $FILENAME.tmp to $EXPORTDIRECTORY/$FILENAME-$CURRENTTIME$FORMATEXT."
-echo "Cleaning up..."
-  if ! rm -Rf "$FILENAME.tmp" ; then
-  echo "Unable to remove $FILENAME.tmp."
-  fi
-exit 1
-fi
-exit 0
+validate_inputs() {
+    [[ -z "$TOKEN" ]] && error_exit "TOKEN is not set."
+    [[ -z "$CHANNEL_ID" ]] && error_exit "CHANNEL_ID is not set."
+    [[ -z "$DCE_FOLDER" ]] && error_exit "DCE_FOLDER is not set."
+    [[ -z "$EXPORT_FOLDER" ]] && error_exit "EXPORT_FOLDER is not set."
+    [[ -z "$FILENAME" ]] && error_exit "FILENAME is not set."
+    [[ -z "$EXPORT_FORMAT" ]] && error_exit "EXPORT_FORMAT is not set."
+}
+
+# Function to get the file extension based on the export format
+get_file_extension() {
+    local format_lc
+    # Convert the export format to lowercase for case-insensitive comparison
+    # This helps avoid issues with the user inputting the format in different cases
+    format_lc=$(echo "$EXPORT_FORMAT" | tr '[:upper:]' '[:lower:]')
+    case "$format_lc" in
+        plaintext) echo "txt" ;;
+        htmldark | htmllight) echo "html" ;;
+        json) echo "json" ;;
+        csv) echo "csv" ;;
+        *) error_exit "\"$EXPORT_FORMAT\" is not a valid export format. Valid options: PlainText, HtmlDark, HtmlLight, Json, Csv." ;;
+    esac
+}
+
+# Function to export the chat using DiscordChatExporter
+export_chat() {
+    cd "$DCE_FOLDER" || error_exit "Failed to change directory to $DCE_FOLDER"
+    echo "[INFO] Exporting chat..."
+    ./DiscordChatExporter.Cli.sh export \
+        -t "$TOKEN" \
+        -c "$CHANNEL_ID" \
+        -f "$EXPORT_FORMAT" \
+        -o "${FILENAME}.tmp" || error_exit "Export failed"
+}
+
+# Function to finalize the export by renaming and moving the file
+finalize_export() {
+    local timestamp output_file
+    # Get the current timestamp in the format YYYY-MM-DD-HH-MM-SS
+    # This will be used to create a unique filename for the exported chat
+    # Otherwise, the file would be overwritten each time the script runs
+    timestamp=$(date +"%Y-%m-%d-%H-%M-%S")
+    # Construct the output file path using the export folder, base filename, timestamp, and file extension
+    output_file="${EXPORT_FOLDER}/${FILENAME}-${timestamp}.${FILE_EXTENSION}"
+
+    echo "[INFO] Moving exported file to: $output_file"
+    if ! mv "${FILENAME}.tmp" "$output_file"; then
+        echo "[WARN] Failed to move file. Cleaning up..."
+        rm -f "${FILENAME}.tmp" || echo "[WARN] Could not delete temporary file."
+        error_exit "Failed to move exported file."
+    fi
+    echo "[INFO] Chat successfully exported to: $output_file"
+}
+
+##########################
+# Main Execution         #
+##########################
+
+validate_inputs
+FILE_EXTENSION=$(get_file_extension)
+export_chat
+finalize_export
 ```
 
-4. Replace:
+4. On the configuration section, edit the following variables without deleting the quotes (`"`):
 
-- `tokenhere` with your [Token](Token-and-IDs.md)
-- `channelhere` with a [Channel ID](Token-and-IDs.md)
-- `dceFOLDERpathhere` with DCE's **directory's path** (e.g. `/Users/user/Desktop/DiscordChatExporterFolder`, NOT `/Users/user/Desktop/DiscordChatExporterFolder/DiscordChatExporter.DLL`)
-- `filenamehere` with the exported channel's filename, without spaces
-- `dirhere` with the directory you want the files to be saved at (e.g. `/Users/user/Documents/Discord\ Exports`)
-- `formathere` with one of the available export formats
+- `TOKEN`: Insert the [Token](Token-and-IDs.md).
+- `CHANNEL_ID`: Insert a [Channel ID](Token-and-IDs.md).
+- `DCE_FOLDER`: DCE's **folder** path (e.g. `"/path/to/DCE.Cli"`, not `"/path/to/DCE.Cli/DiscordChatExporter.dll"`).
+- `EXPORT_FOLDER`: Directory the exported chats will be saved to (e.g. `"/home/user/Documents/Discord Exports"`).
+- `FILENAME`: Exported channel's filename.
+- `EXPORT_FORMAT`: Export format. Options: `PlainText`, `HtmlDark`, `HtmlLight`, `Json` or `Csv`.
 
-To quickly get file or folder paths, select the file/folder, then hit Command+I (⌘I) and copy what's after `Where:`.
-After copying and pasting, make sure the file/folder name is not missing. If a folder has spaces in its name, add `\` before the spaces, like in the example below:
+  Example:
 
-- `Discord\ Exports` - Wrong ✗
-- `/Users/user/Documents` - Wrong ✗
-- `/Users/user/Documents/Discord Exports` - Wrong ✗
-- `/Users/user/Documents/Discord\ Exports/DCE.Cli.dll` - Wrong ✗
-- `/Users/user/Documents/Discord \Exports` - Wrong ✗
-- `/Users/user/Documents/Discord\ Exports` - Correct ✓
-- `/Users/user/Desktop/DiscordChatExporter` - Correct ✓
+  ```bash
+  TOKEN="mfa.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  CHANNEL_ID="123456789012345678"
+  …
+  ```
 
-![Screenshot of mac info window](https://i.imgur.com/29u6Nyx.png)
+  To quickly get paths in Finder, press ⌥⌘C while inside the folder (or while selecting it) to copy its path to the clipboard.
 
 5. Save the file as `filename.sh`, not `.txt`
 6. Open Terminal.app, type `chmod +x`, press the SPACE key, then drag & drop the `filename.sh` into the Terminal window and hit RETURN. You may be prompted for your password, and you won't be able to see it as you type.
@@ -147,13 +189,13 @@ The following example is to export every 3600 seconds (1 hour), replace the inte
 </dict>
 ```
 
-| Key         | Integer           |
-| ----------- | ----------------- |
-| **Month**   | 1-12              |
-| **Day**     | 1-31              |
-| **Weekday** | 0-6 (0 is Sunday) |
-| **Hour**    | 0-23              |
-| **Minute**  | 0-59              |
+| Key         | Integer |
+| ----------- | ------- |
+| **Month**   | 1-12    |
+| **Day**     | 1-31    |
+| **Weekday** | 0-6     |
+| **Hour**    | 0-23    |
+| **Minute**  | 0-59    |
 
 **Sunday** - 0; **Monday** - 1; **Tuesday** - 2; **Wednesday** - 3; **Thursday** - 4; **Friday** - 5; **Saturday** - 6
 
@@ -227,7 +269,7 @@ Every Sunday at midnight and every Wednesday full hour (xx:00). Notice the inclu
   - If you want the script to run only when a certain user is logged in, choose the first one.
   - If you want the script to always run on System Startup, choose the second one.
 
-To quickly go to these directories, open Finder and press Command+Shift+G (⌘⇧G), then paste the path into the text box.
+To quickly go to these directories, open Finder and press ⇧⌘G, then paste the path into the text box.
 
 2. To load the job into launchctl, in Terminal, type `launchctl load`, press SPACE, drag and drop the `.plist` into the Terminal window, then hit RETURN. It won't output anything if it was successfully loaded.
 

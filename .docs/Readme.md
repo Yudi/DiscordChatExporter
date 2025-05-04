@@ -1,4 +1,4 @@
-# Home
+# Documentation Home
 
 ## Installation & Usage
 
@@ -11,12 +11,12 @@
 
 - [How to get Token and Channel IDs](Token-and-IDs.md)
 - [How to use message filters](Message-filters.md)
-- Export scheduling with CLI:
+- Export scheduling with the CLI:
   - [Windows](Scheduling-Windows.md)
   - [macOS](Scheduling-MacOS.md)
   - [Linux](Scheduling-Linux.md)
 
-## Video tutorial
+## Video Tutorial
 
 - Video by [NoIntro Tutorials](https://youtube.com/channel/UCFezKSxdNKJe77-hYiuXu3Q) (using DiscordChatExporter GUI)
 
@@ -24,13 +24,8 @@
 
 ## FAQ & Troubleshooting
 
-TODO: update
-
 - [Frequently Asked Questions (FAQ)](FAQ.md)
   - [First steps help](FAQ.md#first-steps)
 - [Troubleshooting](Troubleshooting.md)
-
   - [Common issues](Troubleshooting.md#common-issues)
   - [It crashes or fails](Troubleshooting.md#it-crashes-or-fails)
-
-- [It's crashing/failing](Troubleshooting.md#DCE-is-crashingfailing)

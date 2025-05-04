@@ -19,7 +19,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the console
 
-1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥⌘I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
+1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (⌥⌘I on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
 
 <br clear="right" />
 <br />
@@ -37,7 +37,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the network monitor
 
-1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥⌘I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
+1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (⌥⌘I on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview) tools will display.
 
 <br clear="right" />
 <br />
@@ -74,12 +74,12 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the storage inspector
 
-1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (<kbd>⌥⌘I</kbd> on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview/) will display.
+1. <img width="500" align="right" src="https://i.imgur.com/zdDwIT5.jpg" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd> (⌥⌘I on macOS). Chrome's [DevTools](https://developer.chrome.com/docs/devtools/overview/) will display.
 
 <br clear="right" />
 <br />
 
-2. <img width="500" align="right" src="https://i.imgur.com/biAUIop.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (<kbd>⇧⌘M</kbd>). Chrome will enter [Device Mode](https://developer.chrome.com/docs/devtools/device-mode/), and the webpage will display as if on a mobile device.
+2. <img width="500" align="right" src="https://i.imgur.com/biAUIop.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (⇧⌘M). Chrome will enter [Device Mode](https://developer.chrome.com/docs/devtools/device-mode/), and the webpage will display as if on a mobile device.
 
 <br clear="right" />
 <br />
@@ -104,7 +104,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-7. <img width="500" align="right" src="https://i.imgur.com/SwWFIH4.png" />Click the text box at the bottom, press <kbd>Ctrl</kbd>+<kbd>A</kbd> (<kbd>⌘A</kbd>) then <kbd>Ctrl</kbd>+<kbd>C</kbd> (<kbd>⌘C</kbd>) to copy the value to your clipboard.
+7. <img width="500" align="right" src="https://i.imgur.com/SwWFIH4.png" />Click the text box at the bottom, press <kbd>Ctrl</kbd>+<kbd>A</kbd> (⌘A) then <kbd>Ctrl</kbd>+<kbd>C</kbd> (⌘C) to copy the value to your clipboard.
 
 <br clear="right" />
 <br />
@@ -113,7 +113,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the console
 
-1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (<kbd>⌥⌘K</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [web console](https://firefox-source-docs.mozilla.org/devtools-user/console/index.html) will display.
+1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>K</kbd> (⌥⌘K on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [web console](https://firefox-source-docs.mozilla.org/devtools-user/console/index.html) will display.
 
 <br clear="right" />
 <br />
@@ -131,12 +131,12 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 
 ##### Using the network monitor
 
-1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> (<kbd>⌥⌘E</kbd> on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [network monitor](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/) will display.
+1. <img width="500" align="right" src="https://i.imgur.com/O34nwdG.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> (⌥⌘E on macOS). Firefox’s [web developer tools](https://firefox-source-docs.mozilla.org/devtools-user/) will display at the bottom of the window, and the [network monitor](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/) will display.
 
 <br clear="right" />
 <br />
 
-2. <img width="500" align="right" src="https://i.imgur.com/j00QzhU.png" />Press <kbd>F5</kbd> (<kbd>⌘R</kbd>). The page will reload, and the [network request list](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_list/index.html) will populate with entries.
+2. <img width="500" align="right" src="https://i.imgur.com/j00QzhU.png" />Press <kbd>F5</kbd> (⌘R). The page will reload, and the [network request list](https://firefox-source-docs.mozilla.org/devtools-user/network_monitor/request_list/index.html) will populate with entries.
 
 <br clear="right" />
 <br />
@@ -173,7 +173,7 @@ Prerequisite step: Navigate to [discord.com](https://discord.com) and login.
 <br clear="right" />
 <br />
 
-2. <img width="500" align="right" src="https://i.imgur.com/TGcbB7f.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (<kbd>⌥⌘M</kbd> on macOS). Firefox will toggle [responsive design mode](https://firefox-source-docs.mozilla.org/devtools-user/responsive_design_mode/), and the web page will display as if on a mobile device. (Note: Discord may steal focus and respond to the command by toggling mute. If this happens, return focus to Firefox’s web developer tools by clicking somewhere in it, then try the command again.)
+2. <img width="500" align="right" src="https://i.imgur.com/TGcbB7f.png" />Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> (⌥⌘M on macOS). Firefox will toggle [responsive design mode](https://firefox-source-docs.mozilla.org/devtools-user/responsive_design_mode/), and the web page will display as if on a mobile device. (Note: Discord may steal focus and respond to the command by toggling mute. If this happens, return focus to Firefox’s web developer tools by clicking somewhere in it, then try the command again.)
 
 <br clear="right" />
 <br />
