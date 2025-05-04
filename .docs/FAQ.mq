@@ -1,11 +1,12 @@
 # Frequently Asked Questions (FAQ)
 
-## General questions
+## Token safety
 
-### Token stealer?
+### Is this a token grabber?
 
 No. Your token is only used to connect to Discord's API, it's not sent anywhere else.  
-The code is open-source, so you can verify this yourself.  
+This is verifiable by looking at the source code.
+
 If you're using the GUI, be aware that your token will be saved to a plain text file unless you disable it in the settings menu.
 
 ### Why should I be worried about the safety of my token?
@@ -17,9 +18,11 @@ Treat it like a password and never share it.
 
 Follow the [instructions here](Token-and-IDs.md).
 
+## General questions
+
 ### Will I get banned if I use this?
 
-Automating user accounts is technically against [Discord's Terms of Service](https://discord.com/terms), use at your discretion.  
+Automating user accounts is against [Discord's Terms of Service](https://discord.com/terms), use at your discretion.  
 [Bot accounts](https://discord.com/developers/docs/topics/oauth2#bot-users) don't have this restriction.
 
 ### Will the messages disappear from the exported file if I delete a message, delete my account or block a person?
@@ -83,12 +86,12 @@ No.
 ### How do I know who exported a chat?
 
 You can't.  
-The exported files don't contain any information about who exported them
+The exported files don't contain any information about who exported them.
 
 ### Virus detected?
 
 False positive. Check it with [VirusTotal](https://www.virustotal.com/gui/).  
-It's due to the bootstrapper used in the GUI.
+It's likely due to the bootstrapper used in the GUI, which is a common target for false positives.
 
 ## First steps
 
@@ -104,7 +107,7 @@ Check the following page:
 
 ### When I open DCE a black window pops up quickly or nothing shows up
 
-If you have [.NET Core Runtime correctly installed](Dotnet.md), you might have downloaded the Cli flavor, try [downloading the Gui](Getting-started.md#gui-or-cli) instead.
+You might have downloaded the Cli flavor, try [downloading the Gui](Getting-started.md#gui-or-cli) instead.
 
 ### How do I run DCE on macOS or Linux?
 
@@ -129,21 +132,13 @@ Try opening it with a different program, try partitioning or use a different fil
 
 Check the following page: [Installing .NET Core Runtime](Dotnet.md)
 
-If you already have .NET Core installed, check if your problem is a [known issue](https://github.com/Tyrrrz/DiscordChatExporter/issues?q=is%3Aissue) before [opening a bug report](https://github.com/Tyrrrz/DiscordChatExporter/issues/new).
-
-### .NET Core Runtime is required
-
-Check the following page: [Installing .NET Core Runtime](Dotnet.md)
-
 ### I see messages in the export, but they have no content
 
-Your bot is missing the 'Message Content Intent'.  
-Go to the [Discord Developer Portal](https://discord.com/developers/applications), navigate to the 'Bot' section and enable it.
+Make sure [Message Content Intent](Token-and-IDs.md##step-3---ensure-message-content-intent-is-enabled) is enabled for your bot.
 
 ### DCE outputs an error and the exported file is incomplete
 
-TODO:
-Please open a new issue.
+Check the [Troubleshooting page](Troubleshooting.md#dce-outputs-an-error-and-the-exported-file-is-incomplete).
 
 ## CLI
 
@@ -159,12 +154,10 @@ Check the [Cli usage instructions](Using-the-CLI.md).
 
 ### I can't export Direct Messages
 
-Make sure you're [copying the DM Channel ID](Token-and-IDs.md#how-to-get-a-direct-message-channel-id), not the person's user ID.
+Make sure you're [copying the DM Channel ID](Token-and-IDs.md#how-to-get-a-direct-message-channel-id), and not the person's user ID.
 
 ## Docker
 
 ### I can't find Docker exported chats
 
-Check the following page:
-
-- [Docker usage instructions](Docker.md)
+Check the [Docker Usage Instructions](Docker.md).

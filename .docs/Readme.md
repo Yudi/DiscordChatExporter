@@ -2,10 +2,10 @@
 
 ## Installation & Usage
 
-- Getting started:
-  - [Using the GUI](Using-the-GUI.md)
-  - [Using the CLI](Using-the-CLI.md)
-  - [File formats](Getting-started.md#file-formats)
+- [Getting started](Getting-started.md)
+- [Using the GUI](Using-the-GUI.md) (beginner-friendly)
+- [Using the CLI](Using-the-CLI.md)
+- [File formats](Getting-started.md)
 
 ## Guides
 
@@ -26,8 +26,11 @@
 
 TODO: update
 
-- [General questions](Troubleshooting.md#general)
-- [First steps help](Troubleshooting.md#first-steps)
+- [Frequently Asked Questions (FAQ)](FAQ.md)
+  - [First steps help](FAQ.md#first-steps)
+- [Troubleshooting](Troubleshooting.md)
+
+  - [Common issues](Troubleshooting.md#common-issues)
+  - [It crashes or fails](Troubleshooting.md#it-crashes-or-fails)
+
 - [It's crashing/failing](Troubleshooting.md#DCE-is-crashingfailing)
-- [Errors](Troubleshooting.md#errors)
-- [**More help**](Troubleshooting.md)
