@@ -139,135 +139,17 @@ jobs:
           --runtime ${{ matrix.rid }}
           --self-contained
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: ${{ matrix.asset }}.${{ matrix.rid }}
-          path: ${{ matrix.app }}/bin/publish/
-          if-no-files-found: error
-
-  pack-macos:
-    runs-on: macos-latest
-    timeout-minutes: 10
-
-    # This now needs to run after the individual arch builds are complete
-    needs: pack
-
-    strategy:
-      matrix:
-        app:
-          - DiscordChatExporter.Cli
-          - DiscordChatExporter.Gui
-        include:
-          - app: DiscordChatExporter.Cli
-            asset: DiscordChatExporter.Cli
-          - app: DiscordChatExporter.Gui
-            # GUI assets aren't suffixed, unlike the CLI assets
-            asset: DiscordChatExporter
-
-    permissions:
-      actions: write
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-
-      - name: Download macOS arm64 artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: ${{ matrix.asset }}.osx-arm64
-          path: ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64
-
-      - name: Download macOS x64 artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: ${{ matrix.asset }}.osx-x64
-          path: ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64
-
-      - name: Create macOS universal binaries
-        run: |
-          # Debug listing of directories
-          # Create a directory for the universal build
-          mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal
-
-          # Copy all non-binary files from x64 build (these don't need lipo)
-          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64 -type f -not -name "*.dylib" | while read file; do
-            rel_path=${file#${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/}
-            mkdir -p $(dirname "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path")
-            cp "$file" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
-          done
-
-          # Create universal binary for main executable
-          lipo -create \
-            -output "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/${{ matrix.asset }}" \
-            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64/${{ matrix.asset }} \
-            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/${{ matrix.asset }}
-
-          chmod +x "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/${{ matrix.asset }}"
-
-          # Process all dylib files (native libraries)
-          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64 -name "*.dylib" | while read x64_lib; do
-            # Get the relative path
-            rel_path=${x64_lib#${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/}
-            arm64_lib="${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64/$rel_path"
-            
-            echo "Processing native library: $rel_path"
-            
-            # Create directory structure if needed
-            mkdir -p $(dirname "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path")
-            
-            # Check if the arm64 version exists
-            if [ -f "$arm64_lib" ]; then
-              # Check if the files might already be universal or have the same architecture
-              x64_archs=$(lipo -archs "$x64_lib" 2>/dev/null || echo "unknown")
-              arm64_archs=$(lipo -archs "$arm64_lib" 2>/dev/null || echo "unknown")
-              
-              echo "  x64 architectures: $x64_archs"
-              echo "  arm64 architectures: $arm64_archs"
-              
-              # If architectures are the same or one file is already universal (contains both archs)
-              if [ "$x64_archs" == "$arm64_archs" ] || [[ "$x64_archs" == *"arm64"* && "$x64_archs" == *"x86_64"* ]] || [[ "$arm64_archs" == *"arm64"* && "$arm64_archs" == *"x86_64"* ]]; then
-                echo "  Files have identical or universal architectures, copying instead of using lipo"
-                # Just copy one of the files (they should be identical)
-                cp "$x64_lib" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
-              else
-                # Create universal dylib
-                echo "  Creating universal binary from both architectures"
-                lipo -create \
-                  -output "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path" \
-                  "$arm64_lib" \
-                  "$x64_lib"
-              fi
-            else
-              # Just copy the x64 version if arm64 doesn't exist
-              echo "  ARM64 version not found, using x64 only"
-              cp "$x64_lib" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
-            fi
-          done
-
-          # Check for arm64-only libraries that might not exist in x64
-          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64 -name "*.dylib" | while read arm64_lib; do
-            rel_path=${arm64_lib#${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64/}
-            x64_lib="${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/$rel_path"
-            
-            # If there's no x64 equivalent, copy the arm64 version
-            if [ ! -f "$x64_lib" ] && [ ! -f "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path" ]; then
-              echo "ARM64-only library found: $rel_path"
-              mkdir -p $(dirname "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path")
-              cp "$arm64_lib" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
-            fi
-          done
-
       - name: Pack Gui to .app bundle
         if: matrix.app == 'DiscordChatExporter.Gui'
         run: |
+          ls -la ${{ matrix.app }}/bin/publish/
+          ls -la ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.${{ matrix.rid }}
           # Create the necessary directory structure for the .app bundle
           mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
           mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources
 
-          # Copy the universal files to the MacOS directory
-          cp ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/* \
+          # Copy the files to the MacOS directory
+          cp ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.${{ matrix.rid }}/* \
               ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
 
           # Create Info.plist file
@@ -307,26 +189,11 @@ jobs:
             cp favicon.icns ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources/
           fi
 
-      # Create zip archives for the universal binaries
-      - name: Create universal binary zip archives
-        run: |
-          # Go to the publish directory
-          cd ${{ matrix.app }}/bin/publish/
-
-          # For CLI, just zip the universal binary and supporting files
-          if [[ "${{ matrix.app }}" == "DiscordChatExporter.Cli" ]]; then
-            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.osx-arm64" -x "*.osx-x64" -x "*.app/*"
-          else
-            # For GUI, zip both the standalone binary and the .app bundle
-            zip -r ${{ matrix.asset }}.macos-universal.zip . -x "*.osx-arm64" -x "*.osx-x64"
-          fi
-
-      # Upload the universal binary packages as artifacts
-      - name: Upload universal binary artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: ${{ matrix.asset }}.macos-universal
-          path: ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal.zip
+          name: ${{ matrix.asset }}.${{ matrix.rid }}
+          path: ${{ matrix.app }}/bin/publish/
           if-no-files-found: error
 
   release:
@@ -336,7 +203,6 @@ jobs:
       - format
       # - test
       - pack
-      - pack-macos
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
