@@ -192,12 +192,11 @@ jobs:
           mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal
 
           # Copy all non-binary files from x64 build (these don't need lipo)
-          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64 -type f -not -name "*.dylib" -not -executable | while read file; do
+          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64 -type f -not -name "*.dylib" | while read file; do
             rel_path=${file#${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/}
             mkdir -p $(dirname "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path")
             cp "$file" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
           done
-
 
           # Create universal binary for main executable
           lipo -create \
@@ -220,12 +219,26 @@ jobs:
             
             # Check if the arm64 version exists
             if [ -f "$arm64_lib" ]; then
-              # Create universal dylib
-              echo "  Creating universal binary from both architectures"
-              lipo -create \
-                -output "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path" \
-                "$arm64_lib" \
-                "$x64_lib"
+              # Check if the files might already be universal or have the same architecture
+              x64_archs=$(lipo -archs "$x64_lib" 2>/dev/null || echo "unknown")
+              arm64_archs=$(lipo -archs "$arm64_lib" 2>/dev/null || echo "unknown")
+              
+              echo "  x64 architectures: $x64_archs"
+              echo "  arm64 architectures: $arm64_archs"
+              
+              # If architectures are the same or one file is already universal (contains both archs)
+              if [ "$x64_archs" == "$arm64_archs" ] || [[ "$x64_archs" == *"arm64"* && "$x64_archs" == *"x86_64"* ]] || [[ "$arm64_archs" == *"arm64"* && "$arm64_archs" == *"x86_64"* ]]; then
+                echo "  Files have identical or universal architectures, copying instead of using lipo"
+                # Just copy one of the files (they should be identical)
+                cp "$x64_lib" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
+              else
+                # Create universal dylib
+                echo "  Creating universal binary from both architectures"
+                lipo -create \
+                  -output "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path" \
+                  "$arm64_lib" \
+                  "$x64_lib"
+              fi
             else
               # Just copy the x64 version if arm64 doesn't exist
               echo "  ARM64 version not found, using x64 only"
