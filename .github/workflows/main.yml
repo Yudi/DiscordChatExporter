@@ -187,14 +187,64 @@ jobs:
 
       - name: Create macOS universal binaries
         run: |
-          # Lipo is Apple's tool for creating universal binaries
-          lipo -create \
-            -output ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal \
-            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64 \
-            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64
+          # Debug listing of directories
+          # Create a directory for the universal build
+          mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal
 
-          # Set executable permissions
-          chmod +x ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal
+          # Copy all non-binary files from x64 build (these don't need lipo)
+          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64 -type f -not -name "*.dylib" -not -executable | while read file; do
+            rel_path=${file#${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/}
+            mkdir -p $(dirname "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path")
+            cp "$file" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
+          done
+
+
+          # Create universal binary for main executable
+          lipo -create \
+            -output "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/${{ matrix.asset }}" \
+            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64/${{ matrix.asset }} \
+            ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/${{ matrix.asset }}
+
+          chmod +x "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/${{ matrix.asset }}"
+
+          # Process all dylib files (native libraries)
+          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64 -name "*.dylib" | while read x64_lib; do
+            # Get the relative path
+            rel_path=${x64_lib#${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/}
+            arm64_lib="${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64/$rel_path"
+            
+            echo "Processing native library: $rel_path"
+            
+            # Create directory structure if needed
+            mkdir -p $(dirname "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path")
+            
+            # Check if the arm64 version exists
+            if [ -f "$arm64_lib" ]; then
+              # Create universal dylib
+              echo "  Creating universal binary from both architectures"
+              lipo -create \
+                -output "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path" \
+                "$arm64_lib" \
+                "$x64_lib"
+            else
+              # Just copy the x64 version if arm64 doesn't exist
+              echo "  ARM64 version not found, using x64 only"
+              cp "$x64_lib" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
+            fi
+          done
+
+          # Check for arm64-only libraries that might not exist in x64
+          find ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64 -name "*.dylib" | while read arm64_lib; do
+            rel_path=${arm64_lib#${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-arm64/}
+            x64_lib="${{ matrix.app }}/bin/publish/${{ matrix.asset }}.osx-x64/$rel_path"
+            
+            # If there's no x64 equivalent, copy the arm64 version
+            if [ ! -f "$x64_lib" ] && [ ! -f "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path" ]; then
+              echo "ARM64-only library found: $rel_path"
+              mkdir -p $(dirname "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path")
+              cp "$arm64_lib" "${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/$rel_path"
+            fi
+          done
 
       - name: Pack Gui to .app bundle
         if: matrix.app == 'DiscordChatExporter.Gui'
