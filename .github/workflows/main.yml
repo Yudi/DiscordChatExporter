@@ -139,50 +139,6 @@ jobs:
           --runtime ${{ matrix.rid }}
           --self-contained
 
-      - name: Pack Gui to .app bundle
-        if: matrix.app == 'DiscordChatExporter.Gui'
-        run: |
-          # Create the necessary directory structure for the .app bundle
-          mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
-          mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources
-
-          shopt -s extglob
-          mv !(${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app) ${{ matrix.app }}/bin/publish/*
-
-          # Create Info.plist file
-          cat > ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Info.plist << EOF
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-          <plist version="1.0">
-          <dict>
-              <key>CFBundleExecutable</key>
-              <string>DiscordChatExporter</string>
-              <key>NSHumanReadableCopyright</key>
-              <string>Copyright (c) Oleksii Holub</string>
-              <key>CFBundleIdentifier</key>
-              <string>com.tyrrrz.${{ matrix.asset }}</string>
-              <key>CFBundleName</key>
-              <string>${{ matrix.asset }}</string>
-              <key>CFBundleDisplayName</key>
-              <string>DiscordChatExporter</string>
-              <key>CFBundleVersion</key>
-              <string>${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}</string>
-              <key>CFBundleShortVersionString</key>
-              <string>${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}</string>
-              <key>NSHighResolutionCapable</key>
-              <true/>
-              <key>CFBundlePackageType</key>
-              <string>APPL</string>
-          </dict>
-          </plist>
-          EOF
-
-          # TODO: convert icon
-          # Copy the icon file if it exists
-          if [ -f "favicon.icns" ]; then
-            cp favicon.icns ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources/
-          fi
-
       - name: Upload artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -254,11 +210,55 @@ jobs:
           path: ${{ matrix.app }}/
 
       - name: Set permissions
-        if: ${{ !startsWith(matrix.rid, 'win-') || !startsWith(matrix.rid, 'osx-') }}
+        if: ${{ !startsWith(matrix.rid, 'win-') }}
         run: chmod +x ${{ matrix.app }}/${{ matrix.asset }}
 
+      - name: Pack Gui to .app bundle
+        if: matrix.app == 'DiscordChatExporter.Gui'
+        run: |
+          # Create the necessary directory structure for the .app bundle
+          mkdir -p ${{ matrix.asset }}.app/Contents/MacOS
+          mkdir -p ${{ matrix.asset }}.app/Contents/Resources
+
+          mv ${{ matrix.app }}/* ${{ matrix.asset }}.app/Contents/MacOS/
+
+          # Create Info.plist file
+          cat > ${{ matrix.asset }}.app/Contents/Info.plist << EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>DiscordChatExporter</string>
+              <key>NSHumanReadableCopyright</key>
+              <string>Copyright (c) Oleksii Holub</string>
+              <key>CFBundleIdentifier</key>
+              <string>com.tyrrrz.${{ matrix.asset }}</string>
+              <key>CFBundleName</key>
+              <string>${{ matrix.asset }}</string>
+              <key>CFBundleDisplayName</key>
+              <string>DiscordChatExporter</string>
+              <key>CFBundleVersion</key>
+              <string>${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}</string>
+              <key>CFBundleShortVersionString</key>
+              <string>${{ github.ref_type == 'tag' && github.ref_name || format('999.9.9-ci-{0}', github.sha) }}</string>
+              <key>NSHighResolutionCapable</key>
+              <true/>
+              <key>CFBundlePackageType</key>
+              <string>APPL</string>
+          </dict>
+          </plist>
+          EOF
+
+          mv ${{ matrix.asset }}.app  ${{ matrix.app }}/${{ matrix.asset }}
+
+          # TODO: convert icon
+          # Copy the icon file if it exists
+          if [ -f "favicon.icns" ]; then
+            cp favicon.icns ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources/
+          fi
+
       - name: Create package
-        if: ${{ !startsWith(matrix.rid, 'osx-') }}
         # Change into the artifacts directory to avoid including the directory itself in the zip archive
         working-directory: ${{ matrix.app }}/
         run: zip -r ../${{ matrix.asset }}.${{ matrix.rid }}.zip .
