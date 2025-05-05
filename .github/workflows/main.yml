@@ -266,8 +266,8 @@ jobs:
           mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
           mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources
 
-          # Copy the universal binary to the MacOS directory
-          cp ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal \
+          # Copy the universal files to the MacOS directory
+          cp ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/* \
               ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }}
 
           # Create Info.plist file
