@@ -268,7 +268,7 @@ jobs:
 
           # Copy the universal files to the MacOS directory
           cp ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.macos-universal/* \
-              ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS/${{ matrix.asset }}
+              ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
 
           # Create Info.plist file
           cat > ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Info.plist << EOF
