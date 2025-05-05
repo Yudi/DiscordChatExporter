@@ -142,15 +142,12 @@ jobs:
       - name: Pack Gui to .app bundle
         if: matrix.app == 'DiscordChatExporter.Gui'
         run: |
-          ls -la ${{ matrix.app }}/bin/publish/
-          ls -la ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.${{ matrix.rid }}
           # Create the necessary directory structure for the .app bundle
           mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
           mkdir -p ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Resources
 
-          # Copy the files to the MacOS directory
-          cp ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.${{ matrix.rid }}/* \
-              ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS
+          shopt -s extglob
+          mv !(${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app) ${{ matrix.app }}/bin/publish/*
 
           # Create Info.plist file
           cat > ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/Info.plist << EOF
@@ -179,9 +176,6 @@ jobs:
           </dict>
           </plist>
           EOF
-
-          # Copy all files to the .app bundle
-          cp -R ${{ matrix.app }}/bin/publish/* ${{ matrix.app }}/bin/publish/${{ matrix.asset }}.app/Contents/MacOS/
 
           # TODO: convert icon
           # Copy the icon file if it exists
